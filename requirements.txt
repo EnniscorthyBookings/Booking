@@ -1,0 +1,8 @@
+pandas
+streamlit_extras
+streamlit_autorefresh
+pytz
+email-to
+secure-smtplib
+PyGithub
+streamlit-js-eval
