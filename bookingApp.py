@@ -43,7 +43,7 @@ try:
 
     # Iterate through rows in the CSV file
     for row in reader:
-        booking_id = int(row["booking_id"])
+        booking_id = float(row["booking_id"])
         booking_data["room_bookings"][booking_id] = {
             "booking_id": booking_id,
             "date": row["date"],
