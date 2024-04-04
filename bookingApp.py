@@ -31,9 +31,14 @@ repo = g.get_repo('ohmydaysOMD/test')
 # Define file paths for storing booking data
 booking_data_file = "ohmydaysOMD/test/booking_data.csv"
 # Load existing booking data from the CSV file
+
+# Get the contents of the CSV file
+contents = repo.get_contents(booking_data_file)
+csv_content = io.StringIO(contents.decoded_content.decode('utf-8'))
+
 try:
     with open(booking_data_file, "r") as file:
-        reader = csv.DictReader(file)
+        reader = csv.DictReader(csv_content)
         booking_data = {"room_bookings": {}, "room_availability": {}}
 
         for row in reader:
