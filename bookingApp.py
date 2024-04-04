@@ -12,13 +12,8 @@ from pytz import timezone
 import pytz
 from github import Github #####
 from streamlit_js_eval import streamlit_js_eval
-import io
+import calendar
 
-# # Authenticate function
-# def authenticate(password):
-#     #if password == st.secrets["password"]:
-#         return True
-#     return False
     
 # Set the timezone to "Europe/Dublin" (Ireland Time)
 ireland_tz = pytz.timezone('Europe/Dublin')
@@ -27,47 +22,38 @@ ireland_tz = pytz.timezone('Europe/Dublin')
 current_time_ireland = datetime.datetime.now(ireland_tz)
 ctif = current_time_ireland.strftime("%d-%m-%y %H:%M:%S")
 
-# Initialize GitHub instance and retrieve repository
 g = Github(st.secrets["git"]["token"])
 repo = g.get_repo('ohmydaysOMD/test')
 
-# Define file path for storing booking data
+# Define file paths for storing booking data
 booking_data_file = "ohmydaysOMD/test/booking_data.csv"
-
+# Load existing booking data from the CSV file
 try:
-    # Get the contents of the CSV file
-    contents = repo.get_contents(booking_data_file)
-    
-    # Decode and read the content of the file
-    csv_content = contents.decoded_content.decode('utf-8').splitlines()
+    with open(booking_data_file, "r") as file:
+        reader = csv.DictReader(file)
+        booking_data = {"room_bookings": {}, "room_availability": {}}
 
-    # Parse CSV content using csv.DictReader
-    reader = csv.DictReader(csv_content)
-    
-    booking_data = {"room_bookings": {}, "room_availability": {}}
+        for row in reader:
+            booking_id = float(row["booking_id"])
+            booking_data["room_bookings"][booking_id] = {
+                "booking_id": booking_id,
+                "date": row["date"],
+                "start_time": row["start_time"],
+                "end_time": row["end_time"],
+                "room": row["room"],
+                "name": row["name"],
+                "email": row["email"],
+                "description": row["description"],
+            }
 
-    # Iterate through rows in the CSV file
-    for row in reader:
-        booking_id = int(row["booking_id"])
-        booking_data["room_bookings"][booking_id] = {
-            "booking_id": booking_id,
-            "date": row["date"],
-            "start_time": row["start_time"],
-            "end_time": row["end_time"],
-            "room": row["room"],
-            "name": row["name"],
-            "email": row["email"],
-            "description": row["description"],
-        }
-
-        # Update room availability data
-        if row["date"] not in booking_data["room_availability"]:
-            booking_data["room_availability"][row["date"]] = {}
-        if row["room"] not in booking_data["room_availability"][row["date"]]:
-            booking_data["room_availability"][row["date"]][row["room"]] = []
-        booking_data["room_availability"][row["date"]][row["room"]].append(
-            (row["start_time"], row["end_time"])
-        )
+            # Update room availability data
+            if row["date"] not in booking_data["room_availability"]:
+                booking_data["room_availability"][row["date"]] = {}
+            if row["room"] not in booking_data["room_availability"][row["date"]]:
+                booking_data["room_availability"][row["date"]][row["room"]] = []
+            booking_data["room_availability"][row["date"]][row["room"]].append(
+                (row["start_time"], row["end_time"])
+            )
 
 except FileNotFoundError:
     booking_data = {"room_bookings": {}, "room_availability": {}}
@@ -103,7 +89,7 @@ def generate_random_booking_id():
     unique_number = "{:02d}{:02d}{:02d}{:02d}{:02d}".format(
         now.year % 100, now.month, now.day, now.hour, now.minute
     )
-    return int(unique_number)
+    return float(unique_number)
     
 # Book a Room
 # Define a dictionary that maps room names to their capacities
@@ -115,7 +101,6 @@ room_capacity = {
     "Desk 4": 1,
 }
 
-# ...
 
 
 def book_room():
@@ -141,6 +126,12 @@ def book_room():
                 formatted_end_times = [et.strftime('%H:%M:%S') for et in available_end_times]
                 end_time = st.selectbox("Select the End Time:", formatted_end_times, index=None)
                 if end_time:
+                    repeat_booking = st.checkbox("Repeat Booking")
+                    if repeat_booking:
+                        repeat_frequency = st.selectbox("Select Repeat Frequency:", ["Weekly", "Bi-Weekly", "Monthly"])
+                    else:
+                        repeat_frequency = None
+
                     available_room_options = []
                     for room, capacity in room_capacity.items():
                         if is_room_available(str(date), str(start_time), str(end_time), room):
@@ -178,21 +169,17 @@ def book_room():
                                 if st.button("Book Room"):
                                     booking_id = generate_random_booking_id()  # Generate a random 4-digit booking ID
                                     booking_data["room_bookings"][booking_id] = {
+                                        "booking_id": booking_id,
                                         "date": str(date),
                                         "start_time": str(start_time),
                                         "end_time": str(end_time),
-                                        "room": selected_room,  # Use the extracted room name
+                                        "room": selected_room,
                                         "name": name,
                                         "email": email,
                                         "description": description,
                                     }
-                                    if str(date) not in booking_data["room_availability"]:
-                                        booking_data["room_availability"][str(date)] = {}
-                                    if selected_room not in booking_data["room_availability"][str(date)]:
-                                        booking_data["room_availability"][str(date)][selected_room] = []
-                                    booking_data["room_availability"][str(date)][selected_room].append((str(start_time), str(end_time)))
                                     
-                                    # Update CSV file on GitHub
+                                     # Update CSV file on GitHub
                                     content = ""
                                     
                                     fieldnames = [
@@ -222,19 +209,73 @@ def book_room():
 
                                     # Push updated CSV to GitHub repository
                                     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
- 
-                                    # Send confirmation email
-                                    if send_confirmation_email(email, booking_id, name, description, selected_room, start_time.strftime('%H:%M:%S'), end_time):
-                                        st.success(f"Booking successful! Your booking ID is {booking_id}.")
-                                        st.success("A confirmation email has been sent to the registered mail.")
+
+
+
+                                    if repeat_booking:
+                                        repeat_bookings(booking_id, date, start_time, end_time, selected_room, description, name, email, repeat_frequency)
+
+                                        # Send confirmation email
+                                        if send_confirmation_email(email, booking_id, name, description, selected_room, start_time.strftime('%H:%M:%S'), end_time):
+                                            st.success(f"Booking successful! Your booking ID is {booking_id}.")
+                                            st.success("A confirmation email has been sent to the registered mail.")
+                                        else:
+                                            st.success(f"Booking successful! Your booking ID is {booking_id}.")
+                                            st.warning("But confirmation email could not be sent to the registered mail.")
                                     else:
-                                        st.success(f"Booking successful! Your booking ID is {booking_id}.")
-                                        st.warning("But confirmation email could not be sent to the registered mail.")
-                                 
+                                        # Send confirmation email
+                                        if send_confirmation_email(email, booking_id, name, description, selected_room, start_time.strftime('%H:%M:%S'), end_time):
+                                            st.success(f"Booking successful! Your booking ID is {booking_id}.")
+                                            st.success("A confirmation email has been sent to the registered mail.")
+                                        else:
+                                            st.success(f"Booking successful! Your booking ID is {booking_id}.")
+                                            st.warning("But confirmation email could not be sent to the registered mail.")
+
+                                    
 
 
 
+def repeat_bookings(original_booking_id, date, start_time, end_time, room, description, name, email, repeat_frequency):
+    if repeat_frequency == "Weekly":
+        interval = 7
+        freqInt = 52
+    elif repeat_frequency == "Bi-Weekly":
+        interval = 14
+        freqInt = 26
+    elif repeat_frequency == "Monthly":
+        interval = 28
+        freqInt = 12
+    
+    for i in range(freqInt):  # Repeat for the next 12 months
+        new_date = date + timedelta(days=i * interval)
+        new_booking_id = original_booking_id + i * 0.1
+        booking_data["room_bookings"][new_booking_id] = {
+            "booking_id": new_booking_id,
+            "date": str(new_date.strftime('%Y-%m-%d')),
+            "start_time": str(start_time),
+            "end_time": str(end_time),
+            "room": room,
+            "name": name,
+            "email": email,
+            "description": description,
+        }
+        
+        # Save the repeated booking data to the CSV file
+        
+        update_booking_csv()
+        
+        
+        # Update room availability data
+        if new_date.strftime('%d-%m-%Y') not in booking_data["room_availability"]:
+            booking_data["room_availability"][new_date.strftime('%d-%m-%Y')] = {}
+        if room not in booking_data["room_availability"][new_date.strftime('%d-%m-%Y')]:
+            booking_data["room_availability"][new_date.strftime('%d-%m-%Y')][room] = []
+        booking_data["room_availability"][new_date.strftime('%d-%m-%Y')][room].append(
+            (start_time.strftime('%H:%M'), end_time)
+        )
 
+
+        
 def is_upcoming(booking, current_datetime):
     date_str = booking["date"]
     time_str = booking["start_time"]
@@ -278,7 +319,7 @@ def cancel_room():
         if user_email_to_cancel:
             user_email_to_cancel = user_email_to_cancel.lower()
             if st.button("Cancel Reservation"):
-                selected_booking_id = int(selected_reservation.split()[-1].strip())
+                selected_booking_id = float(selected_reservation.split()[-1].strip())
 
                 if selected_booking_id in booking_data["room_bookings"]:
                     reservation = booking_data["room_bookings"][selected_booking_id]
@@ -327,52 +368,7 @@ def cancel_room():
                     else:
                         st.warning("Email address does not match. Cancellation failed.")
                         
-###############################################################
-# def create_calendar_table(df):
-#     # Create a new Streamlit container for the calendar
-#     calendar_container = st.container()
 
-#     # Add a header for the calendar
-#     with calendar_container:
-#         st.header("Calendar View")
-
-#     # Add CSS style for the table
-#     st.markdown("""
-#         <style>
-#             table {
-#                 border-collapse: collapse;
-#                 border-spacing: 0;
-#                 width: 100%;
-#                 border: 1px solid #ddd;
-#             }
-
-#             th, td {
-#                 text-align: left;
-#                 padding: 8px;
-#             }
-
-#             th {
-#                 background-color: #f2f2f2;
-#             }
-
-#             td {
-#                 border: 1px solid #ddd;
-#                 height: 120px;
-#             }
-
-#             td.empty {
-#                 background-color: #f9f9f9;
-#             }
-#         </style>
-#     """, unsafe_allow_html=True)
-
-#     # Display the DataFrame as a table
-#     with calendar_container:
-#         st.table(df)
-
-# # Call the function to create the calendar-style table
-
-######################################################################
 def update_booking_csv():
     fieldnames = [
         "booking_id",
@@ -535,6 +531,11 @@ def view_reservations():
             upcoming_reservations_df = pd.DataFrame(upcoming_bookings)
             upcoming_reservations_df = upcoming_reservations_df.drop(columns=["email", "description"])
             upcoming_reservations_df.columns = ["Booking ID", "Date", "Start Time", "End Time", "Venue", "Booked by"]
+            # Convert "Booking ID" column to float and format
+            upcoming_reservations_df["Booking ID"] = upcoming_reservations_df["Booking ID"].astype(float).map("{:.0f}".format)
+            upcoming_reservations_df["Date"] = pd.to_datetime(upcoming_reservations_df["Date"]).dt.strftime('%d/%m/%Y')
+            upcoming_reservations_df["Start Time"] = pd.to_datetime(upcoming_reservations_df["Start Time"]).dt.strftime('%H:%M')
+            upcoming_reservations_df["End Time"] = pd.to_datetime(upcoming_reservations_df["End Time"]).dt.strftime('%H:%M')
             st.table(upcoming_reservations_df.assign(hack='').set_index('hack'))
             #create_calendar_table(upcoming_reservations_df)
 
@@ -613,7 +614,6 @@ def send_confirmation_email(user_email, booking_id, name, description, selected_
 
         # Close the SMTP session
         server.quit()
-
         st.success("Email sent successfully!")
         return True
     except Exception as e:
@@ -657,7 +657,7 @@ if width > 800:
         view_reservations()
 else:
     st.title("Meeting Room & Desk Booking System 🖥️")
-    
+
     date = current_time_ireland.date()
     time1=current_time_ireland.time()
     current_time1 = f"{time1.hour:02d}:{time1.minute:02d}"
@@ -674,10 +674,4 @@ else:
         cancel_room()
     elif menu_choice == "View Bookings":
         view_reservations()
-
-
-
-            
-
-
 
