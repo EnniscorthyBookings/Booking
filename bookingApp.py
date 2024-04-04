@@ -38,8 +38,6 @@ booking_data_file = "ohmydaysOMD/test/booking_data.csv"
 contents = repo.get_contents(booking_data_file)
 csv_content = io.StringIO(contents.decoded_content.decode('utf-8'))
 
-st.write(contents)
-st.write(csv_contents)
 try:
     with open(booking_data_file, "r") as file:
         reader = csv.DictReader(csv_content)
