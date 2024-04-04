@@ -55,14 +55,14 @@ try:
             "description": row["description"],
         }
 
-            # Update room availability data
-            if row["date"] not in booking_data["room_availability"]:
-                booking_data["room_availability"][row["date"]] = {}
-            if row["room"] not in booking_data["room_availability"][row["date"]]:
-                booking_data["room_availability"][row["date"]][row["room"]] = []
-            booking_data["room_availability"][row["date"]][row["room"]].append(
-                (row["start_time"], row["end_time"])
-            )
+        # Update room availability data
+        if row["date"] not in booking_data["room_availability"]:
+            booking_data["room_availability"][row["date"]] = {}
+        if row["room"] not in booking_data["room_availability"][row["date"]]:
+            booking_data["room_availability"][row["date"]][row["room"]] = []
+        booking_data["room_availability"][row["date"]][row["room"]].append(
+            (row["start_time"], row["end_time"])
+        )
 
 except FileNotFoundError:
     booking_data = {"room_bookings": {}, "room_availability": {}}
