@@ -24,6 +24,7 @@ ctif = current_time_ireland.strftime("%d-%m-%y %H:%M:%S")
 
 g = Github(st.secrets["git"]["token"])
 repo = g.get_repo('ohmydaysOMD/test')
+file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
 
 # Define file paths for storing booking data
 booking_data_file = "ohmydaysOMD/test/booking_data.csv"
