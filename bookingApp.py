@@ -32,7 +32,7 @@ g = Github(st.secrets["git"]["token"])
 repo = g.get_repo('ohmydaysOMD/test')
 
 # Define file path for storing booking data
-booking_data_file = "booking_data.csv"
+booking_data_file = "ohmydaysOMD/test/booking_data.csv"
 
 try:
     # Get the contents of the CSV file
