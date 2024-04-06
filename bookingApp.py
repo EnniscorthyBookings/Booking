@@ -369,23 +369,9 @@ def cancel_room():
                     else:
                         st.warning("Email address does not match. Cancellation failed.")
 
-def update_booking_csv(bookings_to_write):
-    fieldnames = [
-        "booking_id",
-        "date",
-        "start_time",
-        "end_time",
-        "room",
-        "name",
-        "email",
-        "description",
-    ]
-
-    # Write content to CSV file
-    with open(booking_data_file, "w", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerow(fieldnames)  # Write header
-        writer.writerows(bookings_to_write)  # Write all booking data at once
+def update_booking_csv(bookings_df):
+    # Write DataFrame to CSV file
+    bookings_df.to_csv(booking_data_file, index=False)
     
     # Read updated content from the CSV file
     with open(booking_data_file, "r") as file:
