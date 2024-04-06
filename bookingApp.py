@@ -371,11 +371,6 @@ def update_booking_csv(bookings_to_write):
         "description",
     ]
 
-    content = ','.join(fieldnames) + '\n'
-    for booking_id, booking_info in booking_data["room_bookings"].items():
-        content += ','.join([str(booking_id), booking_info["date"], booking_info["start_time"], booking_info["end_time"],
-                             booking_info["room"], booking_info["name"], booking_info["email"], booking_info["description"]]) + '\n'
-
     # Write content to CSV file
     with open(booking_data_file, "w", newline="") as file:
         writer = csv.writer(file)
