@@ -358,7 +358,8 @@ def cancel_room():
                         booking_data["room_bookings"].pop(selected_booking_id)
 
                         # Update CSV file
-                        update_booking_csv()
+                        #update_booking_csv()
+                        update_booking_csv(bookings_to_write)
 
                         # Update room availability
                         if str(date) not in booking_data["room_availability"]:
