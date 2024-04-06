@@ -117,6 +117,7 @@ def book_room():
     
     if date:
         st.write(date)
+        st.write(datetime.time(8, 0))
         office_start_time = datetime.time(8, 0)
         office_end_time = datetime.time(20, 0)
         start_times = [office_start_time]
