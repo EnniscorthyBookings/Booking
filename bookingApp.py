@@ -451,7 +451,6 @@ def cancel_room():
                             st.warning("But confirmation email could not be sent to the registered email.")
                     else:
                         st.warning("Email address does not match. Cancellation failed.")
-
 def update_booking_csv(bookings_to_write):
     # Convert bookings_to_write to CSV string
     csv_content = []
@@ -469,13 +468,13 @@ def update_booking_csv(bookings_to_write):
     for booking_id, booking_details in bookings_to_write.items():
         booking_row = [
             str(booking_id),
-            booking_details["date"],
-            booking_details["start_time"],
-            booking_details["end_time"],
-            booking_details["room"],
-            booking_details["name"],
-            booking_details["email"],
-            booking_details["description"]
+            str(booking_details.get("date", "")),
+            str(booking_details.get("start_time", "")),
+            str(booking_details.get("end_time", "")),
+            str(booking_details.get("room", "")),
+            str(booking_details.get("name", "")),
+            str(booking_details.get("email", "")),
+            str(booking_details.get("description", ""))
         ]
         csv_content.append(",".join(booking_row))
 
@@ -483,6 +482,7 @@ def update_booking_csv(bookings_to_write):
     content = "\n".join(csv_content)
     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
+
 
 # def update_booking_csv(bookings_to_write):
 #     # Convert bookings_to_write to CSV string
