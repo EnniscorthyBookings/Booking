@@ -258,7 +258,7 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
 
     for i in range(freqInt):  # Repeat for the specified frequency
         new_date = date + timedelta(days=i * interval)
-        new_booking_id = original_booking_id + i * 0.1
+        new_booking_id = original_booking_id + i * 0.01
         booking_data["room_bookings"][new_booking_id] = {
             "booking_id": new_booking_id,
             "date": str(new_date.strftime('%Y-%m-%d')),
@@ -378,7 +378,6 @@ def is_upcoming(booking, current_datetime):
 #                             st.warning("But confirmation email could not be sent to the registered email.")
 #                     else:
 #                         st.warning("Email address does not match. Cancellation failed.")
-
 def cancel_room():
     st.header("Cancel Room Reservation")
     
@@ -433,18 +432,16 @@ def cancel_room():
                         ]
 
                     if user_email_to_cancel == reservation["email"].lower():
+                        # Remove the booking from the dictionary
                         booking_data["room_bookings"].pop(selected_booking_id)
 
                         # Update CSV file
-                       # update_booking_csv(booking_data)
+                        update_booking_csv(booking_data["room_bookings"])  # Only pass room bookings data
 
                         # Update room availability
                         if str(date) not in booking_data["room_availability"]:
                             booking_data["room_availability"][str(date)] = {}
-                        # if selected_room not in booking_data["room_availability"][str(date)]:
-                        #     booking_data["room_availability"][str(date)][selected_room] = []
-                        #     booking_data["room_availability"][str(date)][selected_room].append((str(start_time), str(end_time)))
-    
+
                         # Send cancellation email
                         if send_cancellation_email(email, selected_booking_id, name, description, date, room, start_time, end_time):
                             st.success(f"Reservation (Booking ID {selected_booking_id}) has been cancelled.")
@@ -454,6 +451,7 @@ def cancel_room():
                             st.warning("But confirmation email could not be sent to the registered email.")
                     else:
                         st.warning("Email address does not match. Cancellation failed.")
+
 
 def update_booking_csv(bookings_to_write):
     # Convert bookings_to_write to CSV string
