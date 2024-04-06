@@ -302,6 +302,8 @@ def is_upcoming(booking, current_datetime):
         st.warning(f"Invalid date or time format found: {date_str} {time_str}. Skipping this booking.")
         return False
 
+from datetime import datetime, timedelta
+
 def cancel_room():
     st.header("Cancel Room Reservation")
     
@@ -334,9 +336,9 @@ def cancel_room():
                 # Check if the booking ID contains a decimal
                 if '.' in selected_booking_id_str:
                     # Extract the integer part of the booking ID
-                    selected_booking_id_int = int(selected_booking_id_str.split('.')[0])
+                    selected_booking_id_int = int(float(selected_booking_id_str))
                     # Filter all bookings with the same integer part
-                    bookings_to_cancel = [booking_id for booking_id in booking_data["room_bookings"].keys() if int(booking_id) == selected_booking_id_int]
+                    bookings_to_cancel = [booking_id for booking_id in booking_data["room_bookings"].keys() if int(float(booking_id)) == selected_booking_id_int]
                 else:
                     # If there's no decimal, just cancel the individual booking
                     bookings_to_cancel = [float(selected_booking_id_str)]
@@ -373,10 +375,6 @@ def cancel_room():
                             # Update room availability
                             if str(date) not in booking_data["room_availability"]:
                                 booking_data["room_availability"][str(date)] = {}
-                                # if selected_room not in booking_data["room_availability"][str(date)]:
-                                #     booking_data["room_availability"][str(date)][selected_room] = []
-                                #     booking_data["room_availability"][str(date)][selected_room].append((str(start_time), str(end_time)))
-
 
                             user_email = reservation["email"]
                             if send_cancellation_email(user_email,selected_booking_id, reservation['name'],reservation['description'],date,room,start_time,end_time):
@@ -387,6 +385,7 @@ def cancel_room():
                                 st.warning("But confirmation email could not be sent to the registered email.")
                         else:
                             st.warning("Email address does not match. Cancellation failed.")
+
 
 # def cancel_room():
 #     st.header("Cancel Room Reservation")
