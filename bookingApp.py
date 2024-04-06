@@ -358,8 +358,8 @@ def cancel_room():
                         booking_data["room_bookings"].pop(selected_booking_id)
 
                         # Update CSV file
-                        #update_booking_csv()
-                        update_booking_csv(bookings_to_write)
+                        update_booking_csv_cancel()
+                        #update_booking_csv(bookings_to_write)
 
                         # Update room availability
                         if str(date) not in booking_data["room_availability"]:
@@ -379,6 +379,50 @@ def cancel_room():
                             st.warning("But confirmation email could not be sent to the registered email.")
                     else:
                         st.warning("Email address does not match. Cancellation failed.")
+
+ef update_booking_csv_cancel():
+    fieldnames = [
+        "booking_id",
+        "date",
+        "start_time",
+        "end_time",
+        "room",
+        "name",
+        "email",
+        "description",
+    ]
+
+    content = ','.join(fieldnames) + '\n'
+    for booking_id, booking_info in booking_data["room_bookings"].items():
+        content += ','.join([str(booking_id), booking_info["date"], booking_info["start_time"], booking_info["end_time"],
+                             booking_info["room"], booking_info["name"], booking_info["email"], booking_info["description"]]) + '\n'
+
+    # Write content to CSV file
+    with open(booking_data_file, "w", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        writer.writeheader()
+        for booking_id, booking_info in booking_data["room_bookings"].items():
+            if not booking_info.get("canceled", False):  # Check if booking is not canceled
+                writer.writerow(
+                    {
+                        "booking_id": booking_id,
+                        "date": booking_info["date"],
+                        "start_time": booking_info["start_time"],
+                        "end_time": booking_info["end_time"],
+                        "room": booking_info["room"],
+                        "name": booking_info["name"],
+                        "email": booking_info["email"],
+                        "description": booking_info["description"],
+                    }
+                )
+    
+    # Read updated content from the CSV file
+    with open(booking_data_file, "r") as file:
+        content = file.read()
+    
+    # Update CSV file on GitHub
+    file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
+    repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
 def update_booking_csv(bookings_to_write):
     # Convert bookings_to_write to CSV string
