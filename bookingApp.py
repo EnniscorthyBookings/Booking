@@ -204,12 +204,9 @@ def book_room():
                                     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
                                     path = "ohmydaysOMD/test"
 
-    
-
 
                                     # Push updated CSV to GitHub repository
                                     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
-
 
 
                                     if repeat_booking:
@@ -277,7 +274,6 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
     update_booking_csv(bookings_to_write)
 
 
-        
 def is_upcoming(booking, current_datetime):
     date_str = booking["date"]
     time_str = booking["start_time"]
@@ -354,11 +350,6 @@ def cancel_room():
                         # Update room availability
                         if str(date) not in booking_data["room_availability"]:
                             booking_data["room_availability"][str(date)] = {}
-                        # if selected_room not in booking_data["room_availability"][str(date)]:
-                        #     booking_data["room_availability"][str(date)][selected_room] = []
-                        #     booking_data["room_availability"][str(date)][selected_room].append((str(start_time), str(end_time)))
-    
-
         
                         user_email = reservation["email"]
                         if send_cancellation_email(user_email,selected_booking_id, reservation['name'],reservation['description'],date,room,start_time,end_time):
