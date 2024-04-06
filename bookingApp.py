@@ -371,15 +371,13 @@ def cancel_room():
 
 def update_booking_csv(bookings_df):
     # Write DataFrame to CSV file
-    bookings_df.to_csv(booking_data_file, index=False)
+    csv_content = bookings_df.to_csv(index=False)
     
-    # Read updated content from the CSV file
-    with open(booking_data_file, "r") as file:
-        content = file.read()
-    
-    # Update CSV file on GitHub
-    file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
-    repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
+    # Upload CSV content to GitHub
+    # g = Github("your_access_token")  # Replace with your GitHub access token
+    # repo = g.get_repo("your_username/your_repository")  # Replace with your repository details
+    # contents = repo.get_contents("path/to/booking_data.csv", ref="main")
+    repo.update_file(contents.path, "Booking Data Updated", csv_content, contents.sha)
 
 def send_cancellation_email(user_email,booking_id,name,description,date1,selected_room,start_time,end_time):
     # Your email credentials
