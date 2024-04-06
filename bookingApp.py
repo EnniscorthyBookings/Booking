@@ -381,10 +381,14 @@ def update_booking_csv(bookings_to_write):
         "description",
     ]
 
+    # Ensure directory exists
+    os.makedirs(os.path.dirname(booking_data_file), exist_ok=True)
+
     # Write content to CSV file
-    with open(booking_data_file, "w", newline="") as file:
+    with open(booking_data_file, "a", newline="") as file:
         writer = csv.writer(file)
-        writer.writerow(fieldnames)  # Write header
+        if os.stat(booking_data_file).st_size == 0:  # Check if file is empty
+            writer.writerow(fieldnames)  # Write header if file is empty
         writer.writerows(bookings_to_write)  # Write all booking data at once
     
     # Read updated content from the CSV file
