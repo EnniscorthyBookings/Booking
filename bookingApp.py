@@ -114,6 +114,7 @@ def book_room():
     st.header("Book a Room or a Desk")
     date = st.date_input("Select the Date:", min_value=current_time_ireland.date(), value=None, format="DD/MM/YYYY")
     current_date = current_time_ireland.date()
+    st.write(date)
     if date:
         office_start_time = datetime.datetime.combine(date, datetime.time(8, 0))
         office_end_time = datetime.datetime.combine(date, datetime.time(20, 0))
