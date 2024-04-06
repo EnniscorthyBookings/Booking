@@ -229,6 +229,7 @@ def book_room():
                                             st.warning("But confirmation email could not be sent to the registered mail.")
 
 
+
 # def book_room():
 #     st.header("Book a Room or a Desk")
 #     date = st.date_input("Select the Date:", min_value=current_time_ireland.date(), value=None, format="DD/MM/YYYY")
