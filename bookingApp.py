@@ -80,10 +80,6 @@ def is_room_available(date, start_time, end_time, room):
 
     return True
 
-# Generate a random 4-digit booking ID
-# def generate_random_booking_id():
-#     return random.randint(1000, 9999)
-
 def generate_random_booking_id():
     now = datetime.datetime.now()
     unique_number = "{:02d}{:02d}{:02d}{:02d}{:02d}".format(
@@ -91,7 +87,6 @@ def generate_random_booking_id():
     )
     return float(unique_number)
     
-# Book a Room
 # Define a dictionary that maps room names to their capacities
 room_capacity = {
     "Meeting Room 1": 14,
@@ -102,7 +97,7 @@ room_capacity = {
 }
 
 
-
+#Book room
 def book_room():
     st.header("Book a Room or a Desk")
     date = st.date_input("Select the Date:", min_value=current_time_ireland.date(), value=None, format="DD/MM/YYYY")
@@ -211,7 +206,6 @@ def book_room():
                                     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
 
-
                                     if repeat_booking:
                                         repeat_bookings(booking_id, date, start_time, end_time, selected_room, description, name, email, repeat_frequency)
 
@@ -277,7 +271,6 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
     update_booking_csv(bookings_to_write)
 
 
-        
 def is_upcoming(booking, current_datetime):
     date_str = booking["date"]
     time_str = booking["start_time"]
@@ -353,11 +346,7 @@ def cancel_room():
 
                         # Update room availability
                         if str(date) not in booking_data["room_availability"]:
-                            booking_data["room_availability"][str(date)] = {}
-                        # if selected_room not in booking_data["room_availability"][str(date)]:
-                        #     booking_data["room_availability"][str(date)][selected_room] = []
-                        #     booking_data["room_availability"][str(date)][selected_room].append((str(start_time), str(end_time)))
-    
+                            booking_data["room_availability"][str(date)] = {} 
 
         
                         user_email = reservation["email"]
@@ -464,7 +453,7 @@ def send_cancellation_email(user_email,booking_id,name,description,date1,selecte
         print(f"Email not sent. Error: {str(e)}")
         return False
 
-
+# View reservations
 def view_reservations():
     st.header("View Bookings")
 
@@ -533,7 +522,7 @@ def view_reservations():
             st.table(past_reservations_df.assign(hack='').set_index('hack'))
 
 
-
+# send email
 def send_confirmation_email(user_email, booking_id, name, description, selected_room, start_time, end_time):
     try:
         # Your email credentials
@@ -602,6 +591,7 @@ def send_confirmation_email(user_email, booking_id, name, description, selected_
         st.error(f"Failed to send email: {str(e)}")
         return False
 
+# Set up page
 st.set_page_config(
     page_title="Meeting Room Booking",
     page_icon=":calendar:",
@@ -609,6 +599,7 @@ st.set_page_config(
     layout="wide",
 )
 
+# Reconfigure for mobile devices
 width = streamlit_js_eval(js_expressions='screen.width', want_output = True, key = 'SCR')
 if width > 800:
     # # Input password
