@@ -110,18 +110,17 @@ room_capacity = {
 }
 
 
-
 def book_room():
     st.header("Book a Room or a Desk")
     date = st.date_input("Select the Date:", min_value=current_time_ireland.date(), value=None, format="DD/MM/YYYY")
     current_date = current_time_ireland.date()
     if date:
-        office_start_time = datetime.time(8, 0)
-        office_end_time = datetime.time(20, 0)
+        office_start_time = datetime.datetime.combine(date, datetime.time(8, 0))
+        office_end_time = datetime.datetime.combine(date, datetime.time(20, 0))
         start_times = [office_start_time]
         while start_times[-1] < office_end_time:
-            next_time = (datetime.datetime.combine(date, start_times[-1]) + timedelta(minutes=15)).time()
-            start_times.append(next_time)
+            next_time = (start_times[-1] + timedelta(minutes=15))
+            start_times.append(next_time.time())
         
         start_time = st.selectbox("Select the Start Time:", start_times, index=None)
         current_time = current_time_ireland.time()
@@ -129,8 +128,8 @@ def book_room():
             if (date == current_date and start_time < current_time):
                 st.warning("Start time should be from current date and time.")
             else:
-                end_of_day = min(office_end_time, datetime.time(23, 59))
-                available_end_times = [datetime.datetime.combine(date, start_time) + timedelta(minutes=i) for i in range(15, (end_of_day.hour - start_time.hour) * 60 + 1, 15)]
+                end_of_day = min(office_end_time.time(), datetime.time(23, 59))
+                available_end_times = [start_time + timedelta(minutes=i) for i in range(15, (end_of_day.hour - start_time.hour) * 60 + 1, 15)]
                 formatted_end_times = [et.strftime('%H:%M:%S') for et in available_end_times]
                 end_time = st.selectbox("Select the End Time:", formatted_end_times, index=None)
                 if end_time:
@@ -187,7 +186,7 @@ def book_room():
                                         "description": description,
                                     }
                                     
-                                     # Update CSV file on GitHub
+                                    # Update CSV file on GitHub
                                     content = ""
                                     
                                     fieldnames = [
@@ -206,19 +205,9 @@ def book_room():
                                         content += ','.join([str(booking_id), booking_info["date"], booking_info["start_time"], booking_info["end_time"],
                                                              booking_info["room"], booking_info["name"], booking_info["email"], booking_info["description"]]) + '\n'
 
-
-                                    # Delete the file
-                                    #repo.create_file("ohmydaysOMD/test/booking_data.csv", "Booking Data Updated", content, branch="main")
-                                    file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
-                                    path = "ohmydaysOMD/test"
-
-    
-
-
                                     # Push updated CSV to GitHub repository
+                                    file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
                                     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
-
-
 
                                     if repeat_booking:
                                         repeat_bookings(booking_id, date, start_time, end_time, selected_room, description, name, email, repeat_frequency)
@@ -238,6 +227,135 @@ def book_room():
                                         else:
                                             st.success(f"Booking successful! Your booking ID is {booking_id}.")
                                             st.warning("But confirmation email could not be sent to the registered mail.")
+
+
+# def book_room():
+#     st.header("Book a Room or a Desk")
+#     date = st.date_input("Select the Date:", min_value=current_time_ireland.date(), value=None, format="DD/MM/YYYY")
+#     current_date = current_time_ireland.date()
+#     if date:
+#         office_start_time = datetime.time(8, 0)
+#         office_end_time = datetime.time(20, 0)
+#         start_times = [office_start_time]
+#         while start_times[-1] < office_end_time:
+#             next_time = (datetime.datetime.combine(date, start_times[-1]) + timedelta(minutes=15)).time()
+#             start_times.append(next_time)
+        
+#         start_time = st.selectbox("Select the Start Time:", start_times, index=None)
+#         current_time = current_time_ireland.time()
+#         if start_time:
+#             if (date == current_date and start_time < current_time):
+#                 st.warning("Start time should be from current date and time.")
+#             else:
+#                 end_of_day = min(office_end_time, datetime.time(23, 59))
+#                 available_end_times = [datetime.datetime.combine(date, start_time) + timedelta(minutes=i) for i in range(15, (end_of_day.hour - start_time.hour) * 60 + 1, 15)]
+#                 formatted_end_times = [et.strftime('%H:%M:%S') for et in available_end_times]
+#                 end_time = st.selectbox("Select the End Time:", formatted_end_times, index=None)
+#                 if end_time:
+#                     repeat_booking = st.toggle("Repeat Booking")
+#                     if repeat_booking:
+#                         repeat_frequency = st.selectbox("Select Repeat Frequency:", ["Weekly", "Bi-Weekly", "Monthly"])
+#                     else:
+#                         repeat_frequency = None
+
+#                     available_room_options = []
+#                     for room, capacity in room_capacity.items():
+#                         if is_room_available(str(date), str(start_time), str(end_time), room):
+#                             available_room_options.append(f"{room} (Capacity: {capacity})")
+                    
+#                     if not available_room_options:
+#                         st.warning("Rooms are not available during this time.")
+#                     else:
+#                         st.info("Available Rooms")
+#                         room_choice = st.selectbox("Select a Room:", available_room_options, index=None)
+#                         if room_choice:
+#                             st.subheader('Enter Booking Details')
+#                             if "Desk" in room_choice:
+#                                 # Extract the selected room name (excluding the capacity information)
+#                                 selected_room = room_choice.split(" (Capacity: ")[0]
+#                                 description = "Desk Booking" #st.text_input("Enter Meeting Title:")
+#                                 name = st.text_input("Enter your Name:")
+#                                 email = st.text_input("Enter your Email:")
+#                                 if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+#                                     st.warning("Please enter a valid email address.")
+#                                     return
+#                             else:
+#                                 # Extract the selected room name (excluding the capacity information)
+#                                 selected_room = room_choice.split(" (Capacity: ")[0]
+#                                 description = st.text_input("Enter Meeting Title:")
+#                                 name = st.text_input("Enter your Name:")
+#                                 email = st.text_input("Enter your Email:")
+#                                 if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+#                                     st.warning("Please enter a valid email address.")
+#                                     return
+                            
+#                             if not name or not description:
+#                                 st.warning("All details are mandatory.")
+#                             else:
+#                                 if st.button("Book Room"):
+#                                     booking_id = generate_random_booking_id()  # Generate a random 4-digit booking ID
+#                                     booking_data["room_bookings"][booking_id] = {
+#                                         "booking_id": booking_id,
+#                                         "date": str(date),
+#                                         "start_time": str(start_time),
+#                                         "end_time": str(end_time),
+#                                         "room": selected_room,
+#                                         "name": name,
+#                                         "email": email,
+#                                         "description": description,
+#                                     }
+                                    
+#                                      # Update CSV file on GitHub
+#                                     content = ""
+                                    
+#                                     fieldnames = [
+#                                         "booking_id",
+#                                         "date",
+#                                         "start_time",
+#                                         "end_time",
+#                                         "room",
+#                                         "name",
+#                                         "email",
+#                                         "description",
+#                                     ]
+#                                     content += ','.join(fieldnames) + '\n'
+#                                     #contentFieldnames = content
+#                                     for booking_id, booking_info in booking_data["room_bookings"].items():
+#                                         content += ','.join([str(booking_id), booking_info["date"], booking_info["start_time"], booking_info["end_time"],
+#                                                              booking_info["room"], booking_info["name"], booking_info["email"], booking_info["description"]]) + '\n'
+
+
+#                                     # Delete the file
+#                                     #repo.create_file("ohmydaysOMD/test/booking_data.csv", "Booking Data Updated", content, branch="main")
+#                                     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
+#                                     path = "ohmydaysOMD/test"
+
+    
+
+
+#                                     # Push updated CSV to GitHub repository
+#                                     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
+
+
+
+#                                     if repeat_booking:
+#                                         repeat_bookings(booking_id, date, start_time, end_time, selected_room, description, name, email, repeat_frequency)
+
+#                                         # Send confirmation email
+#                                         if send_confirmation_email(email, booking_id, name, description, selected_room, start_time.strftime('%H:%M:%S'), end_time):
+#                                             st.success(f"Booking successful! Your booking ID is {booking_id}.")
+#                                             st.success("A confirmation email has been sent to the registered mail.")
+#                                         else:
+#                                             st.success(f"Booking successful! Your booking ID is {booking_id}.")
+#                                             st.warning("But confirmation email could not be sent to the registered mail.")
+#                                     else:
+#                                         # Send confirmation email
+#                                         if send_confirmation_email(email, booking_id, name, description, selected_room, start_time.strftime('%H:%M:%S'), end_time):
+#                                             st.success(f"Booking successful! Your booking ID is {booking_id}.")
+#                                             st.success("A confirmation email has been sent to the registered mail.")
+#                                         else:
+#                                             st.success(f"Booking successful! Your booking ID is {booking_id}.")
+#                                             st.warning("But confirmation email could not be sent to the registered mail.")
 
                                     
 def repeat_bookings(original_booking_id, date, start_time, end_time, room, description, name, email, repeat_frequency):
