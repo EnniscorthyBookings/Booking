@@ -304,6 +304,7 @@ def is_upcoming(booking, current_datetime):
 
 from datetime import datetime, timedelta
 
+
 def cancel_room():
     st.header("Cancel Room Reservation")
     
@@ -331,137 +332,54 @@ def cancel_room():
         if user_email_to_cancel:
             user_email_to_cancel = user_email_to_cancel.lower()
             if st.button("Cancel Reservation"):
-                # Extract the booking ID
-                selected_booking_id_str = selected_reservation.split()[-1].strip()
-                # Check if the booking ID contains a decimal
-                if '.' in selected_booking_id_str:
-                    # Extract the integer part of the booking ID
-                    selected_booking_id_int = int(float(selected_booking_id_str))
-                    # Filter all bookings with the same integer part
-                    bookings_to_cancel = [booking_id for booking_id in booking_data["room_bookings"].keys() if int(float(booking_id)) == selected_booking_id_int]
-                else:
-                    # If there's no decimal, just cancel the individual booking
-                    bookings_to_cancel = [float(selected_booking_id_str)]
+                selected_booking_id = float(selected_reservation.split()[-1].strip())
 
-                for selected_booking_id in bookings_to_cancel:
-                    if selected_booking_id in booking_data["room_bookings"]:
-                        reservation = booking_data["room_bookings"][selected_booking_id]
-                        room = reservation["room"]
-                        date = reservation["date"]
-                        start_time = reservation["start_time"]
-                        end_time = reservation["end_time"]
-                        name = reservation["name"]  # Retrieve name from reservation data
-                        email = reservation["email"]  # Retrieve email from reservation data
-                        description = reservation["description"]  # Retrieve description from reservation data
+                if selected_booking_id in booking_data["room_bookings"]:
+                    reservation = booking_data["room_bookings"][selected_booking_id]
+                    room = reservation["room"]
+                    date = reservation["date"]
+                    start_time = reservation["start_time"]
+                    end_time = reservation["end_time"]
+                    name = reservation["name"]  # Retrieve name from reservation data
+                    email = reservation["email"]  # Retrieve email from reservation data
+                    description = reservation["description"]  # Retrieve description from reservation data
 
-                        formatted_start_time = str(start_time)
-                        formatted_end_time = str(end_time)
-                        room_availability = booking_data["room_availability"]
+                    formatted_start_time = str(start_time)
+                    formatted_end_time = str(end_time)
+                    room_availability = booking_data["room_availability"]
 
-                        if date in room_availability and room in room_availability[date]:
-                            room_availability[date][room] = [
-                                booking
-                                for booking in room_availability[date][room]
-                                if (formatted_start_time, formatted_end_time)
-                                != (booking[0], booking[1])
-                            ]
+                    if date in room_availability and room in room_availability[date]:
+                        room_availability[date][room] = [
+                            booking
+                            for booking in room_availability[date][room]
+                            if (formatted_start_time, formatted_end_time)
+                            != (booking[0], booking[1])
+                        ]
 
-                        if user_email_to_cancel == reservation["email"].lower():
-                            booking_data["room_bookings"].pop(selected_booking_id)
+                    if user_email_to_cancel == reservation["email"].lower():
+                        booking_data["room_bookings"].pop(selected_booking_id)
 
-                            # Update CSV file
-                            update_booking_csv()
+                        # Update CSV file
+                        update_booking_csv()
 
-                            # Update room availability
-                            if str(date) not in booking_data["room_availability"]:
-                                booking_data["room_availability"][str(date)] = {}
-
-                            user_email = reservation["email"]
-                            if send_cancellation_email(user_email,selected_booking_id, reservation['name'],reservation['description'],date,room,start_time,end_time):
-                                st.success(f"Reservation (Booking ID {selected_booking_id}) has been cancelled.")
-                                st.success("A confirmation email has been sent to the registered email.")
-                            else:
-                                st.success(f"Reservation (Booking ID {selected_booking_id}) has been cancelled.")
-                                st.warning("But confirmation email could not be sent to the registered email.")
-                        else:
-                            st.warning("Email address does not match. Cancellation failed.")
-
-
-# def cancel_room():
-#     st.header("Cancel Room Reservation")
-    
-#     # Get the list of booked rooms
-#     booked_rooms = list(booking_data["room_bookings"].values())
-
-#     if not booked_rooms:
-#         st.warning("There are no existing room reservations to cancel.")
-#         return
-
-#     # Filter the reservations to include only upcoming bookings
-#     current_datetime = ctif
-#     upcoming_reservations = [booking for booking in booked_rooms if is_upcoming(booking, current_datetime)]
-
-#     if not upcoming_reservations:
-#         st.warning("No upcoming bookings to cancel.")
-#         return
-
-#     st.subheader("Select the reservation to cancel:")
-#     selected_reservation = st.selectbox("Upcoming Reservations", [f"Booking ID {booking_id}" for booking_id in booking_data["room_bookings"].keys() if is_upcoming(booking_data["room_bookings"][booking_id], current_datetime)], index=None)
-
-#     if selected_reservation:
-#         user_email_to_cancel = st.text_input("Enter Registered Mail used for booking:")
-
-#         if user_email_to_cancel:
-#             user_email_to_cancel = user_email_to_cancel.lower()
-#             if st.button("Cancel Reservation"):
-#                 selected_booking_id = float(selected_reservation.split()[-1].strip())
-
-#                 if selected_booking_id in booking_data["room_bookings"]:
-#                     reservation = booking_data["room_bookings"][selected_booking_id]
-#                     room = reservation["room"]
-#                     date = reservation["date"]
-#                     start_time = reservation["start_time"]
-#                     end_time = reservation["end_time"]
-#                     name = reservation["name"]  # Retrieve name from reservation data
-#                     email = reservation["email"]  # Retrieve email from reservation data
-#                     description = reservation["description"]  # Retrieve description from reservation data
-
-#                     formatted_start_time = str(start_time)
-#                     formatted_end_time = str(end_time)
-#                     room_availability = booking_data["room_availability"]
-
-#                     if date in room_availability and room in room_availability[date]:
-#                         room_availability[date][room] = [
-#                             booking
-#                             for booking in room_availability[date][room]
-#                             if (formatted_start_time, formatted_end_time)
-#                             != (booking[0], booking[1])
-#                         ]
-
-#                     if user_email_to_cancel == reservation["email"].lower():
-#                         booking_data["room_bookings"].pop(selected_booking_id)
-
-#                         # Update CSV file
-#                         update_booking_csv()
-
-#                         # Update room availability
-#                         if str(date) not in booking_data["room_availability"]:
-#                             booking_data["room_availability"][str(date)] = {}
-#                         # if selected_room not in booking_data["room_availability"][str(date)]:
-#                         #     booking_data["room_availability"][str(date)][selected_room] = []
-#                         #     booking_data["room_availability"][str(date)][selected_room].append((str(start_time), str(end_time)))
+                        # Update room availability
+                        if str(date) not in booking_data["room_availability"]:
+                            booking_data["room_availability"][str(date)] = {}
+                        # if selected_room not in booking_data["room_availability"][str(date)]:
+                        #     booking_data["room_availability"][str(date)][selected_room] = []
+                        #     booking_data["room_availability"][str(date)][selected_room].append((str(start_time), str(end_time)))
     
 
         
-#                         user_email = reservation["email"]
-#                         if send_cancellation_email(user_email,selected_booking_id, reservation['name'],reservation['description'],date,room,start_time,end_time):
-#                             st.success(f"Reservation (Booking ID {selected_booking_id}) has been cancelled.")
-#                             st.success("A confirmation email has been sent to the registered email.")
-#                         else:
-#                             st.success(f"Reservation (Booking ID {selected_booking_id}) has been cancelled.")
-#                             st.warning("But confirmation email could not be sent to the registered email.")
-#                     else:
-#                         st.warning("Email address does not match. Cancellation failed.")
+                        user_email = reservation["email"]
+                        if send_cancellation_email(user_email,selected_booking_id, reservation['name'],reservation['description'],date,room,start_time,end_time):
+                            st.success(f"Reservation (Booking ID {selected_booking_id}) has been cancelled.")
+                            st.success("A confirmation email has been sent to the registered email.")
+                        else:
+                            st.success(f"Reservation (Booking ID {selected_booking_id}) has been cancelled.")
+                            st.warning("But confirmation email could not be sent to the registered email.")
+                    else:
+                        st.warning("Email address does not match. Cancellation failed.")
 
 def update_booking_csv(bookings_to_write):
     # Convert bookings_to_write to CSV string
