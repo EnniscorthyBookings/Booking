@@ -562,6 +562,10 @@ def send_confirmation_email(user_email, booking_id, name, description, selected_
                     <td><strong>End Time:</strong></td>
                     <td>{end_time}</td>
                 </tr>
+                <tr>
+                    <td><strong>Repeat_booking:</strong></td>
+                    <td>{repeat_booking}</td>
+                </tr>
             </table>
             <p>Have a nice day!</p>
             <p>Best regards,<br>Your Meeting Room Booking Team</p>
