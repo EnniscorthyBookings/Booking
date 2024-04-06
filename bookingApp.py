@@ -25,44 +25,35 @@ ctif = current_time_ireland.strftime("%d-%m-%y %H:%M:%S")
 g = Github(st.secrets["git"]["token"])
 repo = g.get_repo('ohmydaysOMD/test')
 
-
 # Define file paths for storing booking data
 booking_data_file = "ohmydaysOMD/test/booking_data.csv"
 # Load existing booking data from the CSV file
 try:
-    # Get the contents of the CSV file
-    contents = repo.get_contents(booking_data_file)
+    with open(booking_data_file, "r") as file:
+        reader = csv.DictReader(file)
+        booking_data = {"room_bookings": {}, "room_availability": {}}
 
-    # Decode and read the content of the file
-    csv_content = contents.decoded_content.decode('utf-8').splitlines()
+        for row in reader:
+            booking_id = float(row["booking_id"])
+            booking_data["room_bookings"][booking_id] = {
+                "booking_id": booking_id,
+                "date": row["date"],
+                "start_time": row["start_time"],
+                "end_time": row["end_time"],
+                "room": row["room"],
+                "name": row["name"],
+                "email": row["email"],
+                "description": row["description"],
+            }
 
-    # Parse CSV content using csv.DictReader
-    reader = csv.DictReader(csv_content)
-
-    booking_data = {"room_bookings": {}, "room_availability": {}}
-
-    # Iterate through rows in the CSV file
-    for row in reader:
-        booking_id = float(row["booking_id"])
-        booking_data["room_bookings"][booking_id] = {
-            "booking_id": booking_id,
-            "date": row["date"],
-            "start_time": row["start_time"],
-            "end_time": row["end_time"],
-            "room": row["room"],
-            "name": row["name"],
-            "email": row["email"],
-            "description": row["description"],
-        }
-
-        # Update room availability data
-        if row["date"] not in booking_data["room_availability"]:
-            booking_data["room_availability"][row["date"]] = {}
-        if row["room"] not in booking_data["room_availability"][row["date"]]:
-            booking_data["room_availability"][row["date"]][row["room"]] = []
-        booking_data["room_availability"][row["date"]][row["room"]].append(
-            (row["start_time"], row["end_time"])
-        )
+            # Update room availability data
+            if row["date"] not in booking_data["room_availability"]:
+                booking_data["room_availability"][row["date"]] = {}
+            if row["room"] not in booking_data["room_availability"][row["date"]]:
+                booking_data["room_availability"][row["date"]][row["room"]] = []
+            booking_data["room_availability"][row["date"]][row["room"]].append(
+                (row["start_time"], row["end_time"])
+            )
 
 except FileNotFoundError:
     booking_data = {"room_bookings": {}, "room_availability": {}}
@@ -135,7 +126,7 @@ def book_room():
                 formatted_end_times = [et.strftime('%H:%M:%S') for et in available_end_times]
                 end_time = st.selectbox("Select the End Time:", formatted_end_times, index=None)
                 if end_time:
-                    repeat_booking = st.checkbox("Repeat Booking")
+                    repeat_booking = st.toggle("Repeat Booking")
                     if repeat_booking:
                         repeat_frequency = st.selectbox("Select Repeat Frequency:", ["Weekly", "Bi-Weekly", "Monthly"])
                     else:
@@ -241,10 +232,9 @@ def book_room():
                                             st.warning("But confirmation email could not be sent to the registered mail.")
 
                                     
-
-
-
 def repeat_bookings(original_booking_id, date, start_time, end_time, room, description, name, email, repeat_frequency):
+    booking_data = {"room_bookings": {}}
+    
     if repeat_frequency == "Weekly":
         interval = 7
         freqInt = 52
@@ -254,8 +244,10 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
     elif repeat_frequency == "Monthly":
         interval = 28
         freqInt = 12
-    
-    for i in range(freqInt):  # Repeat for the next 12 months
+
+    bookings_to_write = []  # List to store booking data to write to CSV
+
+    for i in range(freqInt):  # Repeat for the specified frequency
         new_date = date + timedelta(days=i * interval)
         new_booking_id = original_booking_id + i * 0.1
         booking_data["room_bookings"][new_booking_id] = {
@@ -269,19 +261,20 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
             "description": description,
         }
         
-        # Save the repeated booking data to the CSV file
-        
-        update_booking_csv()
-        
-        
-        # Update room availability data
-        if new_date.strftime('%d-%m-%Y') not in booking_data["room_availability"]:
-            booking_data["room_availability"][new_date.strftime('%d-%m-%Y')] = {}
-        if room not in booking_data["room_availability"][new_date.strftime('%d-%m-%Y')]:
-            booking_data["room_availability"][new_date.strftime('%d-%m-%Y')][room] = []
-        booking_data["room_availability"][new_date.strftime('%d-%m-%Y')][room].append(
-            (start_time.strftime('%H:%M'), end_time)
-        )
+        # Append booking info to the list
+        bookings_to_write.append([
+            str(new_booking_id),
+            str(new_date.strftime('%Y-%m-%d')),
+            str(start_time),
+            str(end_time),
+            room,
+            name,
+            email,
+            description
+        ])
+    
+    # Save the repeated booking data to the CSV file
+    update_booking_csv(bookings_to_write)
 
 
         
@@ -376,9 +369,8 @@ def cancel_room():
                             st.warning("But confirmation email could not be sent to the registered email.")
                     else:
                         st.warning("Email address does not match. Cancellation failed.")
-                        
 
-def update_booking_csv():
+def update_booking_csv(bookings_to_write):
     fieldnames = [
         "booking_id",
         "date",
@@ -390,29 +382,11 @@ def update_booking_csv():
         "description",
     ]
 
-    content = ','.join(fieldnames) + '\n'
-    for booking_id, booking_info in booking_data["room_bookings"].items():
-        content += ','.join([str(booking_id), booking_info["date"], booking_info["start_time"], booking_info["end_time"],
-                             booking_info["room"], booking_info["name"], booking_info["email"], booking_info["description"]]) + '\n'
-
     # Write content to CSV file
     with open(booking_data_file, "w", newline="") as file:
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
-        writer.writeheader()
-        for booking_id, booking_info in booking_data["room_bookings"].items():
-            if not booking_info.get("canceled", False):  # Check if booking is not canceled
-                writer.writerow(
-                    {
-                        "booking_id": booking_id,
-                        "date": booking_info["date"],
-                        "start_time": booking_info["start_time"],
-                        "end_time": booking_info["end_time"],
-                        "room": booking_info["room"],
-                        "name": booking_info["name"],
-                        "email": booking_info["email"],
-                        "description": booking_info["description"],
-                    }
-                )
+        writer = csv.writer(file)
+        writer.writerow(fieldnames)  # Write header
+        writer.writerows(bookings_to_write)  # Write all booking data at once
     
     # Read updated content from the CSV file
     with open(booking_data_file, "r") as file:
@@ -421,8 +395,7 @@ def update_booking_csv():
     # Update CSV file on GitHub
     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
-    
-# ...
+
 
 def send_cancellation_email(user_email,booking_id,name,description,date1,selected_room,start_time,end_time):
     # Your email credentials
@@ -433,7 +406,7 @@ def send_cancellation_email(user_email,booking_id,name,description,date1,selecte
     message = MIMEMultipart()
     message["From"] = 'HSE Booking System'
     message["To"] = user_email
-    message["Subject"] = f"🚫 Cancellation Confirmation: (ID-{booking_id})"
+    message["Subject"] = f"Cancellation Confirmation: (ID-{booking_id})"
 
     # Message body
     #message_text = f"Hello {name}!\n\nWe're sorry to inform you that your booking has been canceled. Here are the details of the canceled reservation:\n\n{booking_details}\n\nIf you have any questions or need further assistance, please don't hesitate to contact us.\n\nBest regards,\nYour Meeting Room Booking Team"
@@ -571,7 +544,7 @@ def send_confirmation_email(user_email, booking_id, name, description, selected_
         message = MIMEMultipart()
         message["From"] = 'HSE Booking System'
         message["To"] = user_email
-        message["Subject"] = f"✅ Booking Confirmation: (ID-{booking_id})"
+        message["Subject"] = f"Booking Confirmation: (ID-{booking_id})"
 
         # Create the email content as an HTML table
         message_text = f"""
@@ -683,4 +656,3 @@ else:
         cancel_room()
     elif menu_choice == "View Bookings":
         view_reservations()
-
