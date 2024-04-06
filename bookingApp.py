@@ -116,8 +116,8 @@ def book_room():
     current_date = current_time_ireland.date()
     st.write(date)
     if date:
-        office_start_time = datetime.datetime.combine(date, datetime.time(8, 0))
-        office_end_time = datetime.datetime.combine(date, datetime.time(20, 0))
+        office_start_time = datetime.time(8, 0)
+        office_end_time = datetime.time(20, 0)
         start_times = [office_start_time]
         while start_times[-1] < office_end_time:
             next_time = (start_times[-1] + timedelta(minutes=15))
