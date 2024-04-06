@@ -452,7 +452,6 @@ def cancel_room():
                     else:
                         st.warning("Email address does not match. Cancellation failed.")
 
-
 def update_booking_csv(bookings_to_write):
     # Convert bookings_to_write to CSV string
     csv_content = []
@@ -466,13 +465,45 @@ def update_booking_csv(bookings_to_write):
         "email",
         "description"
     ]))
-    for booking in bookings_to_write:
-        csv_content.append(",".join(map(str, booking)))
+    
+    for booking_id, booking_details in bookings_to_write.items():
+        booking_row = [
+            str(booking_id),
+            booking_details["date"],
+            booking_details["start_time"],
+            booking_details["end_time"],
+            booking_details["room"],
+            booking_details["name"],
+            booking_details["email"],
+            booking_details["description"]
+        ]
+        csv_content.append(",".join(booking_row))
 
     # Update CSV file on GitHub
     content = "\n".join(csv_content)
     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
+
+# def update_booking_csv(bookings_to_write):
+#     # Convert bookings_to_write to CSV string
+#     csv_content = []
+#     csv_content.append(",".join([
+#         "booking_id",
+#         "date",
+#         "start_time",
+#         "end_time",
+#         "room",
+#         "name",
+#         "email",
+#         "description"
+#     ]))
+#     for booking in bookings_to_write:
+#         csv_content.append(",".join(map(str, booking)))
+
+#     # Update CSV file on GitHub
+#     content = "\n".join(csv_content)
+#     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
+#     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
 
 def send_cancellation_email(user_email,booking_id,name,description,date1,selected_room,start_time,end_time):
