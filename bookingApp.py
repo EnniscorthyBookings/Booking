@@ -369,15 +369,27 @@ def cancel_room():
                     else:
                         st.warning("Email address does not match. Cancellation failed.")
 
-def update_booking_csv(bookings_df):
-    # Write DataFrame to CSV file
-    csv_content = bookings_df.to_csv(index=False)
+def update_booking_csv(booking_data, repo):
+    content = ""
+    fieldnames = [
+        "booking_id",
+        "date",
+        "start_time",
+        "end_time",
+        "room",
+        "name",
+        "email",
+        "description",
+    ]
+    content += ','.join(fieldnames) + '\n'
     
-    # Upload CSV content to GitHub
-    # g = Github("your_access_token")  # Replace with your GitHub access token
-    # repo = g.get_repo("your_username/your_repository")  # Replace with your repository details
-    # contents = repo.get_contents("path/to/booking_data.csv", ref="main")
-    repo.update_file(contents.path, "Booking Data Updated", csv_content, contents.sha)
+    for booking_id, booking_info in booking_data["room_bookings"].items():
+        content += ','.join([str(booking_id), booking_info["date"], booking_info["start_time"], booking_info["end_time"],
+                             booking_info["room"], booking_info["name"], booking_info["email"], booking_info["description"]]) + '\n'
+
+    # Update CSV file on GitHub
+    file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
+    repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
 def send_cancellation_email(user_email,booking_id,name,description,date1,selected_room,start_time,end_time):
     # Your email credentials
