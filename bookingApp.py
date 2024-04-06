@@ -358,7 +358,6 @@ def cancel_room():
                             st.warning("But confirmation email could not be sent to the registered email.")
                     else:
                         st.warning("Email address does not match. Cancellation failed.")
-
 def update_booking_csv(bookings_to_write):
     fieldnames = [
         "booking_id",
@@ -372,18 +371,44 @@ def update_booking_csv(bookings_to_write):
     ]
 
     # Write content to CSV file
-    with open(booking_data_file, "w", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerow(fieldnames)  # Write header
-        writer.writerows(bookings_to_write)  # Write all booking data at once
-    
-    # Read updated content from the CSV file
-    with open(booking_data_file, "r") as file:
-        content = file.read()
+    content = io.StringIO()
+    writer = csv.writer(content)
+    writer.writerow(fieldnames)  # Write header
+    writer.writerows(bookings_to_write)  # Write all booking data at once
     
     # Update CSV file on GitHub
-    file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
-    repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
+    try:
+        file_content = repo.get_contents(booking_data_file)
+        repo.update_file(file_content.path, "Booking Data Updated", content.getvalue(), file_content.sha, branch="main")
+        print("Booking data updated successfully.")
+    except Exception as e:
+        print("Error updating booking data:", e)
+        
+# def update_booking_csv(bookings_to_write):
+#     fieldnames = [
+#         "booking_id",
+#         "date",
+#         "start_time",
+#         "end_time",
+#         "room",
+#         "name",
+#         "email",
+#         "description",
+#     ]
+
+#     # Write content to CSV file
+#     with open(booking_data_file, "w", newline="") as file:
+#         writer = csv.writer(file)
+#         writer.writerow(fieldnames)  # Write header
+#         writer.writerows(bookings_to_write)  # Write all booking data at once
+    
+#     # Read updated content from the CSV file
+#     with open(booking_data_file, "r") as file:
+#         content = file.read()
+    
+#     # Update CSV file on GitHub
+#     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
+#     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
 
 def send_cancellation_email(user_email,booking_id,name,description,date1,selected_room,start_time,end_time):
