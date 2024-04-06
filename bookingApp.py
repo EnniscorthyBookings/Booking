@@ -392,7 +392,7 @@ def update_booking_csv(bookings_to_write):
     ]
 
     # Write content to CSV file
-    with open(booking_data_file, "w", newline="") as file:
+    with open(booking_data, "w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(fieldnames)  # Write header
         writer.writerows(bookings_to_write)  # Write all booking data at once
