@@ -380,7 +380,7 @@ def cancel_room():
                     else:
                         st.warning("Email address does not match. Cancellation failed.")
 
-ef update_booking_csv_cancel():
+def update_booking_csv_cancel():
     fieldnames = [
         "booking_id",
         "date",
