@@ -14,7 +14,6 @@ from github import Github #####
 from streamlit_js_eval import streamlit_js_eval
 import calendar
 
-    
 # Set the timezone to "Europe/Dublin" (Ireland Time)
 ireland_tz = pytz.timezone('Europe/Dublin')
 
