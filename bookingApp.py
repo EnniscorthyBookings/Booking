@@ -360,7 +360,34 @@ def cancel_room():
                         # Update CSV file
                         #update_booking_csv()
                         #update_booking_csv(booking_data["room_bookings"])
-                        update_booking_csv_cancel()
+                        bookings_to_write = []  # List to store booking data to write to CSV
+
+                        for i in range(freqInt):  # Repeat for the specified frequency
+                            new_date = date + timedelta(days=i * interval)
+                            new_booking_id = original_booking_id + i * 0.01
+                            booking_data["room_bookings"][new_booking_id] = {
+                                "booking_id": new_booking_id,
+                                "date": str(new_date.strftime('%Y-%m-%d')),
+                                "start_time": str(start_time),
+                                "end_time": str(end_time),
+                                "room": room,
+                                "name": name,
+                                "email": email,
+                                "description": description,
+                            }
+                            
+                            # Append booking info to the list
+                            bookings_to_write.append([
+                                str(new_booking_id),
+                                str(new_date.strftime('%Y-%m-%d')),
+                                str(start_time),
+                                str(end_time),
+                                room,
+                                name,
+                                email,
+                                description
+                            ])
+                        update_booking_csv(bookings_to_write)
 
                         # Update room availability
                         if str(date) not in booking_data["room_availability"]:
