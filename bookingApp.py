@@ -362,7 +362,7 @@ def cancel_room():
                         #update_booking_csv(booking_data["room_bookings"])
                         bookings_to_write = []  # List to store booking data to write to CSV
 
-                        for i in range(freqInt):  # Repeat for the specified frequency
+                        for i in range(1):  # Repeat for the specified frequency
                             new_date = date + timedelta(days=i * interval)
                             new_booking_id = original_booking_id + i * 0.01
                             booking_data["room_bookings"][new_booking_id] = {
