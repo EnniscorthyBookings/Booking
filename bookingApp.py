@@ -596,29 +596,25 @@ def update_booking_csv_cancel(bookings_to_write):
     ]))
     
     for booking_details in bookings_to_write:
-        # Check if the booking_details dictionary has the necessary keys
-        if "booking_id" not in booking_details:
-            st.write("Error: 'booking_id' key not found in booking_details:", booking_details)
-            continue  # Skip this iteration if booking_id is missing
-
-        booking_id = str(booking_details["booking_id"])
+        # Make sure booking_details contains the necessary keys
+        booking_id = booking_details.get("booking_id", "")
         date = booking_details.get("date", "")
         start_time = booking_details.get("start_time", "")
         end_time = booking_details.get("end_time", "")
-        room = str(booking_details.get("room", ""))
-        name = str(booking_details.get("name", ""))
-        email = str(booking_details.get("email", ""))
-        description = str(booking_details.get("description", ""))
+        room = booking_details.get("room", "")
+        name = booking_details.get("name", "")
+        email = booking_details.get("email", "")
+        description = booking_details.get("description", "")
 
         booking_row = [
-            booking_id,
-            date,
-            start_time,
-            end_time,
-            room,
-            name,
-            email,
-            description
+            str(booking_id),
+            str(date),
+            str(start_time),
+            str(end_time),
+            str(room),
+            str(name),
+            str(email),
+            str(description)
         ]
         csv_content.append(",".join(booking_row))
 
@@ -626,6 +622,7 @@ def update_booking_csv_cancel(bookings_to_write):
     content = "\n".join(csv_content)
     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
+
 
 # def update_booking_csv(bookings_to_write):
 #     # Add this line to inspect the content of bookings_to_write
