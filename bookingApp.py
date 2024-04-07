@@ -413,9 +413,6 @@ def update_booking_csv(bookings_to_write):
     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
 def update_booking_csv_cancel(bookings_to_write):
-    # Add this line to inspect the content of bookings_to_write
-    print("Content of bookings_to_write:", bookings_to_write)
-
     # Convert bookings_to_write to CSV string
     csv_content = []
     csv_content.append(",".join([
@@ -428,20 +425,16 @@ def update_booking_csv_cancel(bookings_to_write):
         "email",
         "description"
     ]))
-    
-    for booking_details in bookings_to_write:
-        # Add this line to inspect the content of booking_details
-        print("Content of booking_details:", booking_details)
 
-        # Make sure booking_details contains the necessary keys
-        booking_id = booking_details.get("booking_id", "")
-        date = booking_details.get("date", "")
-        start_time = booking_details.get("start_time", "")
-        end_time = booking_details.get("end_time", "")
-        room = booking_details.get("room", "")
-        name = booking_details.get("name", "")
-        email = booking_details.get("email", "")
-        description = booking_details.get("description", "")
+    for booking in bookings_to_write:
+        booking_id = booking.get("booking_id", "")
+        date = booking.get("date", "")
+        start_time = booking.get("start_time", "")
+        end_time = booking.get("end_time", "")
+        room = booking.get("room", "")
+        name = booking.get("name", "")
+        email = booking.get("email", "")
+        description = booking.get("description", "")
 
         booking_row = [
             str(booking_id),
