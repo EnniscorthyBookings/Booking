@@ -328,7 +328,8 @@ def cancel_room(booking_data, update_booking_csv):
                         booking_data["room_bookings"].pop(selected_booking_id)
 
                         # Update CSV file
-                        update_booking_csv(booking_data["room_bookings"])
+                        bookings_to_write = list(booking_data["room_bookings"].values())
+                        update_booking_csv(bookings_to_write)
 
                         # Send cancellation email
                         if send_cancellation_email(email, selected_booking_id, name, description, date, room, start_time, end_time):
@@ -339,6 +340,7 @@ def cancel_room(booking_data, update_booking_csv):
                             st.warning("But confirmation email could not be sent to the registered email.")
                     else:
                         st.warning("Email address does not match. Cancellation failed.")
+
 
 
 # def cancel_room(booking_data, update_booking_csv):
