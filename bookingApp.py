@@ -668,9 +668,9 @@ def update_booking_csv(bookings_to_write):
             continue  # Skip this iteration if booking_id is missing
 
         booking_id = str(booking_details["booking_id"])
-        date = str(booking_details.get("date", ""))
-        start_time = str(booking_details.get("start_time", ""))
-        end_time = str(booking_details.get("end_time", ""))
+        date = booking_details.get("date", "")
+        start_time = booking_details.get("start_time", "")
+        end_time = booking_details.get("end_time", "")
         room = str(booking_details.get("room", ""))
         name = str(booking_details.get("name", ""))
         email = str(booking_details.get("email", ""))
