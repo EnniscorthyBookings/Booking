@@ -328,7 +328,7 @@ def cancel_room(booking_data, update_booking_csv):
                         booking_data["room_bookings"].pop(selected_booking_id)
 
                         # Update CSV file
-                        bookings_to_write = list(booking_data["room_bookings"].values())
+                        bookings_to_write = list(booking_data[room_bookings].values())
                         update_booking_csv(bookings_to_write)
 
                         # Send cancellation email
