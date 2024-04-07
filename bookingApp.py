@@ -661,9 +661,9 @@ def update_booking_csv(bookings_to_write):
         "description"
     ]))
     
-    for booking_id, booking_details in bookings_to_write.items():
+    for booking_details in bookings_to_write:
         booking_row = [
-            str(booking_id),
+            str(booking_details.get("booking_id", "")),
             str(booking_details.get("date", "")),
             str(booking_details.get("start_time", "")),
             str(booking_details.get("end_time", "")),
@@ -678,6 +678,7 @@ def update_booking_csv(bookings_to_write):
     content = "\n".join(csv_content)
     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
+
 
     
 # def update_booking_csv_cancel():
