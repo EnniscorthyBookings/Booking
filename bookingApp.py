@@ -662,15 +662,25 @@ def update_booking_csv(bookings_to_write):
     ]))
     
     for booking_details in bookings_to_write:
+        # Make sure booking_details contains the necessary keys
+        booking_id = booking_details.get("booking_id", "")
+        date = booking_details.get("date", "")
+        start_time = booking_details.get("start_time", "")
+        end_time = booking_details.get("end_time", "")
+        room = booking_details.get("room", "")
+        name = booking_details.get("name", "")
+        email = booking_details.get("email", "")
+        description = booking_details.get("description", "")
+
         booking_row = [
-            str(booking_details.get("booking_id", "")),
-            str(booking_details.get("date", "")),
-            str(booking_details.get("start_time", "")),
-            str(booking_details.get("end_time", "")),
-            str(booking_details.get("room", "")),
-            str(booking_details.get("name", "")),
-            str(booking_details.get("email", "")),
-            str(booking_details.get("description", ""))
+            str(booking_id),
+            str(date),
+            str(start_time),
+            str(end_time),
+            str(room),
+            str(name),
+            str(email),
+            str(description)
         ]
         csv_content.append(",".join(booking_row))
 
@@ -678,6 +688,7 @@ def update_booking_csv(bookings_to_write):
     content = "\n".join(csv_content)
     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
+
 
 
     
