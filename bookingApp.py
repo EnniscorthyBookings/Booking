@@ -525,10 +525,30 @@ def update_booking_csv(bookings_to_write):
     
 def update_booking_csv_cancel(bookings_to_write):
     # Convert bookings_to_write to CSV string
+    data = json.loads(bookings_to_write)
 
+    # Define CSV string
+    csv_string = ''
+    
+    # Write header to CSV string
+    csv_string += ",".join(["booking_id", "date", "start_time", "end_time", "room", "name", "email", "description"]) + "\n"
+    
+    # Write rows to CSV string
+    for booking_id, booking_info in data.items():
+        csv_string += ",".join([
+            str(booking_info["booking_id"]),
+            booking_info["date"],
+            booking_info["start_time"],
+            booking_info["end_time"],
+            booking_info["room"],
+            booking_info["name"],
+            booking_info["email"],
+            booking_info["description"]
+        ]) + "\n"
+    
 
     # Update CSV file on GitHub
-    content = "\n".join(bookings_to_write).encode()  # Convert content to bytes
+    content = csv_string # "\n".join(bookings_to_write).encode()  # Convert content to bytes
     file_path = "ohmydaysOMD/test/booking_data.csv"
     branch_name = "main"
     try:
