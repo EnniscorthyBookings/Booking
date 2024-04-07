@@ -191,8 +191,8 @@ def book_room():
 
                                     ########
                                     bookings_to_write.append([
-                                        str(booking_id),
-                                        str(date),
+                                        str(nbooking_id),
+                                        str(date.strftime('%Y-%m-%d')),
                                         str(start_time),
                                         str(end_time),
                                         room,
