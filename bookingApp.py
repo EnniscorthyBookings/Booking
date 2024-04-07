@@ -666,7 +666,7 @@ if width > 800:
     if menu_choice == "Book a Room or Desk":
         book_room()
     elif menu_choice == "Cancel Booking":
-        cancel_room()
+        cancel_room(selected_booking_id, booking_data, update_booking_csv)
     elif menu_choice == "View Bookings":
         view_reservations()
 else:
@@ -685,7 +685,7 @@ else:
     if menu_choice == "Book a Room or Desk":
         book_room()
     elif menu_choice == "Cancel Booking":
-        cancel_room(booking_data, update_booking_csv)
+        cancel_room(selected_booking_id, booking_data, update_booking_csv)
     elif menu_choice == "View Bookings":
         view_reservations()
 
