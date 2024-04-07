@@ -257,7 +257,7 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
     bookings_to_write = []  # List to store booking data to write to CSV
 
     for i in range(freqInt):  # Repeat for the specified frequency
-        
+        new_date = date + timedelta(days=i * interval)
         new_booking_id = original_booking_id + i * 0.001
         booking_data["room_bookings"][new_booking_id] = {
             "booking_id": new_booking_id,
