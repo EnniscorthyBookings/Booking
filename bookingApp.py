@@ -537,93 +537,7 @@ def cancel_room():
 #                             st.warning("But confirmation email could not be sent to the registered email.")
 #                     else:
 #                         st.warning("Email address does not match. Cancellation failed.")
-# def update_booking_csv(bookings_to_write):
-#     # Convert bookings_to_write to CSV string
-#     csv_content = []
-#     csv_content.append(",".join([
-#         "booking_id",
-#         "date",
-#         "start_time",
-#         "end_time",
-#         "room",
-#         "name",
-#         "email",
-#         "description"
-#     ]))
-    
-#     for booking_id, booking_details in bookings_to_write.items():
-#         booking_row = [
-#             str(booking_id),
-#             str(booking_details.get("date", "")),
-#             str(booking_details.get("start_time", "")),
-#             str(booking_details.get("end_time", "")),
-#             str(booking_details.get("room", "")),
-#             str(booking_details.get("name", "")),
-#             str(booking_details.get("email", "")),
-#             str(booking_details.get("description", ""))
-#         ]
-#         csv_content.append(",".join(booking_row))
 
-#     # Update CSV file on GitHub
-#     content = "\n".join(csv_content)
-#     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
-#     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
-# def update_booking_csv(bookings_to_write):
-#     # Add this line to inspect the content of bookings_to_write
-#     print("Content of bookings_to_write:", bookings_to_write)
-
-#     # Convert bookings_to_write to CSV string
-#     csv_content = []
-#     csv_content.append(",".join([
-#         "booking_id",
-#         "date",
-#         "start_time",
-#         "end_time",
-#         "room",
-#         "name",
-#         "email",
-#         "description"
-#     ]))
-    
-#     for booking_id, booking_details in bookings_to_write.items():
-#         booking_row = [
-#             str(booking_id),
-#             str(booking_details.get("date", "")),
-#             str(booking_details.get("start_time", "")),
-#             str(booking_details.get("end_time", "")),
-#             str(booking_details.get("room", "")),
-#             str(booking_details.get("name", "")),
-#             str(booking_details.get("email", "")),
-#             str(booking_details.get("description", ""))
-#         ]
-#         csv_content.append(",".join(booking_row))
-
-#     # Update CSV file on GitHub
-#     content = "\n".join(csv_content)
-#     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
-#     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
-
-
-# def update_booking_csv(bookings_to_write):
-#     # Convert bookings_to_write to CSV string
-#     csv_content = booking_data
-#     csv_content.append(",".join([
-#         "booking_id",
-#         "date",
-#         "start_time",
-#         "end_time",
-#         "room",
-#         "name",
-#         "email",
-#         "description"
-#     ]))
-#     for booking in bookings_to_write:
-#         csv_content.append(",".join(map(str, booking)))
-
-#     # Update CSV file on GitHub
-#     content = "\n".join(csv_content)
-#     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
-#     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
 def update_room_availability(date, room, start_time, end_time):
     # Retrieve room availability data from booking_data
@@ -643,14 +557,8 @@ def update_room_availability(date, room, start_time, end_time):
     # Update the booking_data dictionary with the modified room_availability
     booking_data["room_availability"] = room_availability
 
-
 def update_booking_csv(bookings_to_write):
-    # Add this line to inspect the content of bookings_to_write
-    print("Content of bookings_to_write:", bookings_to_write)
-
-    # Convert bookings_to_write to CSV string
-    csv_content = []
-    csv_content.append(",".join([
+    fieldnames = [
         "booking_id",
         "date",
         "start_time",
@@ -658,40 +566,72 @@ def update_booking_csv(bookings_to_write):
         "room",
         "name",
         "email",
-        "description"
-    ]))
+        "description",
+    ]
+
+    # Write content to CSV file
+    with open(booking_data_file, "w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(fieldnames)  # Write header
+        writer.writerows(bookings_to_write)  # Write all booking data at once
     
-    for booking_details in bookings_to_write:
-        # Check if the booking_details dictionary has the necessary keys
-        if "booking_id" not in booking_details:
-            st.write("Error: 'booking_id' key not found in booking_details:", booking_details)
-            continue  # Skip this iteration if booking_id is missing
-
-        booking_id = str(booking_details["booking_id"])
-        date = booking_details.get("date", "")
-        start_time = booking_details.get("start_time", "")
-        end_time = booking_details.get("end_time", "")
-        room = str(booking_details.get("room", ""))
-        name = str(booking_details.get("name", ""))
-        email = str(booking_details.get("email", ""))
-        description = str(booking_details.get("description", ""))
-
-        booking_row = [
-            booking_id,
-            date,
-            start_time,
-            end_time,
-            room,
-            name,
-            email,
-            description
-        ]
-        csv_content.append(",".join(booking_row))
-
+    # Read updated content from the CSV file
+    with open(booking_data_file, "r") as file:
+        content = file.read()
+    
     # Update CSV file on GitHub
-    content = "\n".join(csv_content)
     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
+
+
+# def update_booking_csv(bookings_to_write):
+#     # Add this line to inspect the content of bookings_to_write
+#     print("Content of bookings_to_write:", bookings_to_write)
+
+#     # Convert bookings_to_write to CSV string
+#     csv_content = []
+#     csv_content.append(",".join([
+#         "booking_id",
+#         "date",
+#         "start_time",
+#         "end_time",
+#         "room",
+#         "name",
+#         "email",
+#         "description"
+#     ]))
+    
+#     for booking_details in bookings_to_write:
+#         # Check if the booking_details dictionary has the necessary keys
+#         if "booking_id" not in booking_details:
+#             st.write("Error: 'booking_id' key not found in booking_details:", booking_details)
+#             continue  # Skip this iteration if booking_id is missing
+
+#         booking_id = str(booking_details["booking_id"])
+#         date = booking_details.get("date", "")
+#         start_time = booking_details.get("start_time", "")
+#         end_time = booking_details.get("end_time", "")
+#         room = str(booking_details.get("room", ""))
+#         name = str(booking_details.get("name", ""))
+#         email = str(booking_details.get("email", ""))
+#         description = str(booking_details.get("description", ""))
+
+#         booking_row = [
+#             booking_id,
+#             date,
+#             start_time,
+#             end_time,
+#             room,
+#             name,
+#             email,
+#             description
+#         ]
+#         csv_content.append(",".join(booking_row))
+
+#     # Update CSV file on GitHub
+#     content = "\n".join(csv_content)
+#     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
+#     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
 
 
