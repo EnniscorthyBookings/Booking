@@ -359,21 +359,21 @@ def cancel_room():
 
                         # # Update CSV file
                         # #update_booking_csv()
-                        # #update_booking_csv(booking_data["room_bookings"])
-                        # bookings_to_write = []  # List to store booking data to write to CSV
+                        #update_booking_csv(booking_data["room_bookings"])
+                        bookings_to_write = []  # List to store booking data to write to CSV
 
                         
-                        # # Append booking info to the list
-                        # bookings_to_write.append([
-                        #     str(booking_id),
-                        #     str(date),
-                        #     str(start_time),
-                        #     str(end_time),
-                        #     room,
-                        #     name,
-                        #     email,
-                        #     description
-                        # ])
+                        # Append booking info to the list
+                        bookings_to_write.append([
+                            str(booking_id),
+                            str(date),
+                            str(start_time),
+                            str(end_time),
+                            room,
+                            name,
+                            email,
+                            description
+                        ])
                         update_booking_csv(bookings_to_write)
 
                         # Update room availability
