@@ -644,7 +644,7 @@ def update_room_availability(date, room, start_time, end_time):
     booking_data["room_availability"] = room_availability
 
 
-ddef update_booking_csv(bookings_to_write):
+def update_booking_csv(bookings_to_write):
     # Add this line to inspect the content of bookings_to_write
     print("Content of bookings_to_write:", bookings_to_write)
 
