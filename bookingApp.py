@@ -534,10 +534,30 @@ def cancel_room():
 #     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
 
+# def update_booking_csv(bookings_to_write):
+#     # Convert bookings_to_write to CSV string
+#     csv_content = booking_data
+#     csv_content.append(",".join([
+#         "booking_id",
+#         "date",
+#         "start_time",
+#         "end_time",
+#         "room",
+#         "name",
+#         "email",
+#         "description"
+#     ]))
+#     for booking in bookings_to_write:
+#         csv_content.append(",".join(map(str, booking)))
+
+#     # Update CSV file on GitHub
+#     content = "\n".join(csv_content)
+#     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
+#     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
+
+
 def update_booking_csv(bookings_to_write):
-    # Convert bookings_to_write to CSV string
-    csv_content = booking_data
-    csv_content.append(",".join([
+    fieldnames = [
         "booking_id",
         "date",
         "start_time",
@@ -545,17 +565,18 @@ def update_booking_csv(bookings_to_write):
         "room",
         "name",
         "email",
-        "description"
-    ]))
+        "description",
+    ]
+
+    # Write content to CSV file
     for booking in bookings_to_write:
         csv_content.append(",".join(map(str, booking)))
-
-    # Update CSV file on GitHub
     content = "\n".join(csv_content)
+    
+    # Update CSV file on GitHub
     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
-
-
+    
 # def update_booking_csv_cancel():
 #     fieldnames = [
 #         "booking_id",
