@@ -190,19 +190,19 @@ def book_room():
                                     }
 
                                     ########
-                                    bookings_to_write.append([
-                                        str(booking_id),
-                                        str(date.strftime('%Y-%m-%d')),
-                                        str(start_time),
-                                        str(end_time),
-                                        room,
-                                        name,
-                                        email,
-                                        description
-                                    ])
+                                    # bookings_to_write.append([
+                                    #     str(booking_id),
+                                    #     str(date.strftime('%Y-%m-%d')),
+                                    #     str(start_time),
+                                    #     str(end_time),
+                                    #     room,
+                                    #     name,
+                                    #     email,
+                                    #     description
+                                    # ])
                                     
                                     # Update CSV file on GitHub
-                                    update_booking_csv(bookings_to_write)
+                                    update_booking_csv()
                                    # update_booking_csv(booking_data)
                                     
                                     if repeat_booking:
