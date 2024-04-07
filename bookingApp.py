@@ -359,7 +359,7 @@ def cancel_room():
                         update_room_availability(date, room, start_time, end_time)
 
                         # Update CSV file
-                        update_booking_csv(booking_data["room_bookings"])
+                        update_booking_csv_cancel(booking_data["room_bookings"])
 
                         # Send cancellation email
                         if send_cancellation_email(email, selected_booking_id, name, description, date, room, start_time, end_time):
@@ -578,6 +578,31 @@ def update_booking_csv(bookings_to_write):
     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
+def update_booking_csv_cancel(bookings_to_write):
+    fieldnames = [
+        "booking_id",
+        "date",
+        "start_time",
+        "end_time",
+        "room",
+        "name",
+        "email",
+        "description",
+    ]
+
+    # Write content to CSV file
+    with open(booking_data_file, "w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(fieldnames)  # Write header
+        writer.writerows(bookings_to_write)  # Write all booking data at once
+    
+    # Read updated content from the CSV file
+    with open(booking_data_file, "r") as file:
+        content = file.read()
+    
+    # Update CSV file on GitHub
+    file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
+    repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
 # def update_booking_csv(bookings_to_write):
 #     # Add this line to inspect the content of bookings_to_write
