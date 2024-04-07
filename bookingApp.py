@@ -258,7 +258,7 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
 
     for i in range(freqInt):  # Repeat for the specified frequency
         
-        new_booking_id = original_booking_id + i * 0.01
+        new_booking_id = original_booking_id + i * 0.001
         booking_data["room_bookings"][new_booking_id] = {
             "booking_id": new_booking_id,
             "date": str(new_date.strftime('%Y-%m-%d')),
