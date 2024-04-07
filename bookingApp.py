@@ -413,6 +413,8 @@ def update_booking_csv(bookings_to_write):
     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
+import streamlit as st  # Import Streamlit library
+
 def update_booking_csv_cancel(bookings_to_write):
     # Convert bookings_to_write to CSV string
     csv_content = []
@@ -428,8 +430,9 @@ def update_booking_csv_cancel(bookings_to_write):
     ]))
 
     for booking in bookings_to_write:
-        print("Current booking:", booking)  # Add this line for debugging
+        st.write("Current booking:", booking)  # Display current booking
         booking_id = booking.get("booking_id", "")
+        st.write("Booking ID:", booking_id)  # Display booking ID
         date = booking.get("date", "")
         start_time = booking.get("start_time", "")
         end_time = booking.get("end_time", "")
@@ -454,6 +457,7 @@ def update_booking_csv_cancel(bookings_to_write):
     content = "\n".join(csv_content)
     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
+
 
 
 
