@@ -301,7 +301,9 @@ def is_upcoming(booking, current_datetime):
     except ValueError:
         st.warning(f"Invalid date or time format found: {date_str} {time_str}. Skipping this booking.")
         return False
-def cancel_room():
+import streamlit as st
+
+def cancel_room(booking_data, update_booking_csv):
     st.header("Cancel Room Reservation")
     
     # Get the list of booked rooms
@@ -355,10 +357,8 @@ def cancel_room():
                     if user_email_to_cancel == reservation["email"].lower():
                         booking_data["room_bookings"].pop(selected_booking_id)
 
-
                         # Update CSV file
-                        update_booking_csv()
-                        
+                        update_booking_csv(booking_data["room_bookings"])
 
                         # Send cancellation email
                         if send_cancellation_email(email, selected_booking_id, name, description, date, room, start_time, end_time):
