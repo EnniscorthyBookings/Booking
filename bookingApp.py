@@ -525,9 +525,11 @@ def update_booking_csv(bookings_to_write):
 
     
 def update_booking_csv_cancel(bookings_to_write):
-    # Convert bookings_to_write to CSV string
-    # Parse JSON directly if it's already a string
-    data = json.loads(bookings_to_write)
+  # Convert dictionary to JSON string
+    bookings_json_string = json.dumps(bookings_to_write)
+    
+    # Parse JSON string
+    data = json.loads(bookings_json_string)
     
     # Define CSV string
     csv_string = ''
@@ -547,8 +549,7 @@ def update_booking_csv_cancel(bookings_to_write):
             booking_info["email"],
             booking_info["description"]
         ]) + "\n"
-    
-
+        
     # Update CSV file on GitHub
     content = csv_string # "\n".join(bookings_to_write).encode()  # Convert content to bytes
     file_path = "ohmydaysOMD/test/booking_data.csv"
