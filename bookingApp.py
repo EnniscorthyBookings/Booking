@@ -189,10 +189,6 @@ def book_room():
                                         "description": description,
                                     }
 
-                                    st.write(booking_data["room_bookings"])
-    
-
-
                                     
                                     # Update CSV file on GitHub
                                     update_booking_csv_cancel(booking_data["room_bookings"])
