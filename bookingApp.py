@@ -628,6 +628,24 @@ def cancel_room():
 #     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
 #     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
+def update_room_availability(date, room, start_time, end_time):
+    # Retrieve room availability data from booking_data
+    room_availability = booking_data["room_availability"]
+
+    # Check if the date exists in room_availability
+    if date in room_availability and room in room_availability[date]:
+        # Remove the canceled booking from room_availability
+        room_availability[date][room] = [
+            booking
+            for booking in room_availability[date][room]
+            if (str(start_time), str(end_time)) != (booking[0], booking[1])
+        ]
+
+    # Optionally, you might want to handle cases where the date or room doesn't exist in room_availability
+
+    # Update the booking_data dictionary with the modified room_availability
+    booking_data["room_availability"] = room_availability
+
 
 def update_booking_csv(bookings_to_write):
     # Add this line to inspect the content of bookings_to_write
