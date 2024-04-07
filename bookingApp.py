@@ -327,7 +327,7 @@ def cancel_room():
                         st.write(booking_data)
 
                         # Update CSV file
-                        update_booking_csv(booking_data["room_bookings"])
+                        update_booking_csv_cancel(booking_data["room_bookings"])
 
                         # Update room availability
                         if str(date) not in booking_data["room_availability"]:
@@ -522,28 +522,13 @@ def update_booking_csv(bookings_to_write):
     except Exception as e:
         st.error(f"Failed to update booking data: {e}")
 
-import os.path
-
+    
 def update_booking_csv_cancel(bookings_to_write):
     # Convert bookings_to_write to CSV string
-    csv_content = []
-    if not os.path.exists("ohmydaysOMD/test/booking_data.csv"):
-        csv_content.append(",".join([
-            "booking_id",
-            "date",
-            "start_time",
-            "end_time",
-            "room",
-            "name",
-            "email",
-            "description"
-        ]))
-    
-    for booking in bookings_to_write:
-        csv_content.append(",".join(map(str, booking)))
+
 
     # Update CSV file on GitHub
-    content = "\n".join(csv_content).encode()  # Convert content to bytes
+    content = "\n".join(bookings_to_write).encode()  # Convert content to bytes
     file_path = "ohmydaysOMD/test/booking_data.csv"
     branch_name = "main"
     try:
@@ -553,7 +538,7 @@ def update_booking_csv_cancel(bookings_to_write):
         st.success("Booking data updated successfully!")
     except Exception as e:
         st.error(f"Failed to update booking data: {e}")
-
+        
 
 def send_cancellation_email(user_email,booking_id,name,description,date1,selected_room,start_time,end_time):
     # Your email credentials
