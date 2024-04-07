@@ -195,7 +195,7 @@ def book_room():
 
                                     
                                     # Update CSV file on GitHub
-                                    update_booking_csv(booking_data["room_bookings"])
+                                    update_booking_csv_cancel(booking_data["room_bookings"])
                                    # update_booking_csv(booking_data)
                                     
                                     if repeat_booking:
