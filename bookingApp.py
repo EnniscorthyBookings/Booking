@@ -357,23 +357,23 @@ def cancel_room():
                     if user_email_to_cancel == reservation["email"].lower():
                         booking_data["room_bookings"].pop(selected_booking_id)
 
-                        # Update CSV file
-                        #update_booking_csv()
-                        #update_booking_csv(booking_data["room_bookings"])
-                        bookings_to_write = []  # List to store booking data to write to CSV
+                        # # Update CSV file
+                        # #update_booking_csv()
+                        # #update_booking_csv(booking_data["room_bookings"])
+                        # bookings_to_write = []  # List to store booking data to write to CSV
 
                         
-                        # Append booking info to the list
-                        bookings_to_write.append([
-                            str(booking_id),
-                            str(date),
-                            str(start_time),
-                            str(end_time),
-                            room,
-                            name,
-                            email,
-                            description
-                        ])
+                        # # Append booking info to the list
+                        # bookings_to_write.append([
+                        #     str(booking_id),
+                        #     str(date),
+                        #     str(start_time),
+                        #     str(end_time),
+                        #     room,
+                        #     name,
+                        #     email,
+                        #     description
+                        # ])
                         update_booking_csv(bookings_to_write)
 
                         # Update room availability
@@ -536,7 +536,7 @@ def cancel_room():
 
 def update_booking_csv(bookings_to_write):
     # Convert bookings_to_write to CSV string
-    csv_content = []
+    csv_content = booking_data
     csv_content.append(",".join([
         "booking_id",
         "date",
@@ -555,49 +555,50 @@ def update_booking_csv(bookings_to_write):
     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
-def update_booking_csv_cancel():
-    fieldnames = [
-        "booking_id",
-        "date",
-        "start_time",
-        "end_time",
-        "room",
-        "name",
-        "email",
-        "description",
-    ]
 
-    content = ','.join(fieldnames) + '\n'
-    for booking_id, booking_info in booking_data["room_bookings"].items():
-        content += ','.join([str(booking_id), booking_info["date"], booking_info["start_time"], booking_info["end_time"],
-                             booking_info["room"], booking_info["name"], booking_info["email"], booking_info["description"]]) + '\n'
+# def update_booking_csv_cancel():
+#     fieldnames = [
+#         "booking_id",
+#         "date",
+#         "start_time",
+#         "end_time",
+#         "room",
+#         "name",
+#         "email",
+#         "description",
+#     ]
 
-    # Write content to CSV file
-    with open(booking_data_file, "w", newline="") as file:
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
-        writer.writeheader()
-        for booking_id, booking_info in booking_data["room_bookings"].items():
-            if not booking_info.get("canceled", False):  # Check if booking is not canceled
-                writer.writerow(
-                    {
-                        "booking_id": booking_id,
-                        "date": booking_info["date"],
-                        "start_time": booking_info["start_time"],
-                        "end_time": booking_info["end_time"],
-                        "room": booking_info["room"],
-                        "name": booking_info["name"],
-                        "email": booking_info["email"],
-                        "description": booking_info["description"],
-                    }
-                )
+#     content = ','.join(fieldnames) + '\n'
+#     for booking_id, booking_info in booking_data["room_bookings"].items():
+#         content += ','.join([str(booking_id), booking_info["date"], booking_info["start_time"], booking_info["end_time"],
+#                              booking_info["room"], booking_info["name"], booking_info["email"], booking_info["description"]]) + '\n'
+
+#     # Write content to CSV file
+#     with open(booking_data_file, "w", newline="") as file:
+#         writer = csv.DictWriter(file, fieldnames=fieldnames)
+#         writer.writeheader()
+#         for booking_id, booking_info in booking_data["room_bookings"].items():
+#             if not booking_info.get("canceled", False):  # Check if booking is not canceled
+#                 writer.writerow(
+#                     {
+#                         "booking_id": booking_id,
+#                         "date": booking_info["date"],
+#                         "start_time": booking_info["start_time"],
+#                         "end_time": booking_info["end_time"],
+#                         "room": booking_info["room"],
+#                         "name": booking_info["name"],
+#                         "email": booking_info["email"],
+#                         "description": booking_info["description"],
+#                     }
+#                 )
     
-    # Read updated content from the CSV file
-    with open(booking_data_file, "r") as file:
-        content = file.read()
+#     # Read updated content from the CSV file
+#     with open(booking_data_file, "r") as file:
+#         content = file.read()
     
-    # Update CSV file on GitHub
-    file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
-    repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
+#     # Update CSV file on GitHub
+#     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
+#     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
 
 def send_cancellation_email(user_email,booking_id,name,description,date1,selected_room,start_time,end_time):
