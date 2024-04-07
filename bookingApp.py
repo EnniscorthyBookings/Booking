@@ -390,6 +390,27 @@ def update_room_availability(date, room, start_time, end_time):
     # Update the booking_data dictionary with the modified room_availability
     booking_data["room_availability"] = room_availability
 
+# def update_booking_csv(bookings_to_write):
+#     # Convert bookings_to_write to CSV string
+#     csv_content = []
+#     csv_content.append(",".join([
+#         "booking_id",
+#         "date",
+#         "start_time",
+#         "end_time",
+#         "room",
+#         "name",
+#         "email",
+#         "description"
+#     ]))
+#     for booking in bookings_to_write:
+#         csv_content.append(",".join(map(str, booking)))
+
+#     # Update CSV file on GitHub
+#     content = "\n".join(csv_content)
+#     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
+#     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
+
 def update_booking_csv(bookings_to_write):
     # Convert bookings_to_write to CSV string
     csv_content = []
@@ -403,15 +424,20 @@ def update_booking_csv(bookings_to_write):
         "email",
         "description"
     ]))
+    
     for booking in bookings_to_write:
-        csv_content.append(",".join(map(str, booking)))
+        try:
+            csv_content.append(",".join(map(str, booking)))
+        except Exception as e:
+            print(f"Error converting booking to string: {e}")
+            print("Booking contents:", booking)
+            # Handle the error or skip this booking if necessary
 
     # Update CSV file on GitHub
     content = "\n".join(csv_content)
     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
-import streamlit as st  # Import Streamlit library
 
 def update_booking_csv_cancel(bookings_to_write, github_token, repo_path):
     fieldnames = [
