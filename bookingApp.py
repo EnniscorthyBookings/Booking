@@ -324,9 +324,10 @@ def cancel_room():
 
                     if user_email_to_cancel == reservation["email"].lower():
                         booking_data["room_bookings"].pop(selected_booking_id)
+                        st.write(booking_data)
 
                         # Update CSV file
-                        update_booking_csv(booking_data[room_bookings])
+                        update_booking_csv(booking_data["room_bookings"])
 
                         # Update room availability
                         if str(date) not in booking_data["room_availability"]:
