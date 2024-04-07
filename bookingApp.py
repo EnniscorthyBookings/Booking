@@ -188,42 +188,12 @@ def book_room():
                                         "description": description,
                                     }
                                     
-                                     # Update CSV file on GitHub
-                                    content = ""
+                                    # Update CSV file on GitHub
+                                    update_booking_csv(booking_data)
                                     
-                                    fieldnames = [
-                                        "booking_id",
-                                        "date",
-                                        "start_time",
-                                        "end_time",
-                                        "room",
-                                        "name",
-                                        "email",
-                                        "description",
-                                    ]
-                                    content += ','.join(fieldnames) + '\n'
-                                    #contentFieldnames = content
-                                    for booking_id, booking_info in booking_data["room_bookings"].items():
-                                        content += ','.join([str(booking_id), booking_info["date"], booking_info["start_time"], booking_info["end_time"],
-                                                             booking_info["room"], booking_info["name"], booking_info["email"], booking_info["description"]]) + '\n'
-
-
-                                    # Delete the file
-                                    #repo.create_file("ohmydaysOMD/test/booking_data.csv", "Booking Data Updated", content, branch="main")
-                                    file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
-                                    path = "ohmydaysOMD/test"
-
-    
-
-
-                                    # Push updated CSV to GitHub repository
-                                    repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
-
-
-
                                     if repeat_booking:
                                         repeat_bookings(booking_id, date, start_time, end_time, selected_room, description, name, email, repeat_frequency)
-
+                                    
                                         # Send confirmation email
                                         if send_confirmation_email(email, booking_id, name, description, selected_room, start_time.strftime('%H:%M:%S'), end_time):
                                             st.success(f"Booking successful! Your booking ID is {booking_id}.")
@@ -239,7 +209,6 @@ def book_room():
                                         else:
                                             st.success(f"Booking successful! Your booking ID is {booking_id}.")
                                             st.warning("But confirmation email could not be sent to the registered mail.")
-
                                     
 def repeat_bookings(original_booking_id, date, start_time, end_time, room, description, name, email, repeat_frequency):
     booking_data = {"room_bookings": {}}
@@ -374,32 +343,7 @@ def cancel_room(booking_data, update_booking_csv):
 
 
 
-def update_booking_csv(bookings_to_write):
-    # Convert bookings_to_write to CSV string
-    csv_content = []
-    csv_content.append(",".join([
-        "booking_id",
-        "date",
-        "start_time",
-        "end_time",
-        "room",
-        "name",
-        "email",
-        "description"
-    ]))
-    
-    for booking in bookings_to_write:
-        try:
-            csv_content.append(",".join(map(str, booking)))
-        except Exception as e:
-            print(f"Error converting booking to string: {e}")
-            print("Booking contents:", booking)
-            # Handle the error or skip this booking if necessary
 
-    # Update CSV file on GitHub
-    content = "\n".join(csv_content)
-    file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
-    repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
 def update_room_availability(date, room, start_time, end_time):
     # Retrieve room availability data from booking_data
@@ -418,6 +362,34 @@ def update_room_availability(date, room, start_time, end_time):
 
     # Update the booking_data dictionary with the modified room_availability
     booking_data["room_availability"] = room_availability
+    
+def update_booking_csv(bookings_to_write):
+    # Convert bookings_to_write to CSV string
+    csv_content = []
+    csv_content.append(",".join([
+        "booking_id",
+        "date",
+        "start_time",
+        "end_time",
+        "room",
+        "name",
+        "email",
+        "description"
+    ]))
+    for booking in bookings_to_write:
+        csv_content.append(",".join(map(str, booking)))
+
+    # Update CSV file on GitHub
+    content = "\n".join(csv_content).encode()  # Convert content to bytes
+    file_path = "ohmydaysOMD/test/booking_data.csv"
+    branch_name = "main"
+    try:
+        repo = g.get_repo("ohmydaysOMD/test")  # Assuming 'g' is your authenticated GitHub instance
+        file = repo.get_contents(file_path, ref=branch_name)
+        repo.update_file(file_path, "Update booking data", content, file.sha, branch=branch_name)
+        st.success("Booking data updated successfully!")
+    except Exception as e:
+        st.error(f"Failed to update booking data: {e}")
 
 # def update_booking_csv(bookings_to_write):
 #     # Convert bookings_to_write to CSV string
