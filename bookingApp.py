@@ -271,75 +271,26 @@ def is_upcoming(booking, current_datetime):
         st.warning(f"Invalid date or time format found: {date_str} {time_str}. Skipping this booking.")
         return False
         
-def cancel_room(booking_data, update_booking_csv):
-    st.header("Cancel Room Reservation")
-    
-    # Get the list of booked rooms
-    booked_rooms = list(booking_data["room_bookings"].values())
 
-    if not booked_rooms:
-        st.warning("There are no existing room reservations to cancel.")
-        return
+def cancel_room(selected_booking_id, booking_data, update_booking_csv):
+    # Remove the selected booking from the DataFrame
+    booking_data["room_bookings"].pop(selected_booking_id, None)
 
-    # Filter the reservations to include only upcoming bookings
-    current_datetime = datetime.datetime.now().strftime('%d-%m-%y %H:%M:%S')
-    upcoming_reservations = [booking for booking in booked_rooms if is_upcoming(booking, current_datetime)]
+    # Convert the updated DataFrame to CSV
+    df = pd.DataFrame.from_dict(booking_data["room_bookings"], orient='index')
+    df.to_csv("ohmydaysOMD/test/booking_data.csv", index=False)
 
-    if not upcoming_reservations:
-        st.warning("No upcoming bookings to cancel.")
-        return
-
-    st.subheader("Select the reservation to cancel:")
-    selected_reservation = st.selectbox("Upcoming Reservations", [f"Booking ID {booking_id}" for booking_id in booking_data["room_bookings"].keys() if is_upcoming(booking_data["room_bookings"][booking_id], current_datetime)], index=None)
-
-    if selected_reservation:
-        user_email_to_cancel = st.text_input("Enter Registered Mail used for booking:")
-
-        if user_email_to_cancel:
-            user_email_to_cancel = user_email_to_cancel.lower()
-            if st.button("Cancel Reservation"):
-                selected_booking_id = float(selected_reservation.split()[-1].strip())
-
-                if selected_booking_id in booking_data["room_bookings"]:
-                    reservation = booking_data["room_bookings"][selected_booking_id]
-
-                    if user_email_to_cancel == reservation["email"].lower():
-                        room = reservation["room"]
-                        date = reservation["date"]
-                        start_time = reservation["start_time"]
-                        end_time = reservation["end_time"]
-                        name = reservation["name"]
-                        email = reservation["email"]
-                        description = reservation["description"]
-
-                        formatted_start_time = str(start_time)
-                        formatted_end_time = str(end_time)
-                        room_availability = booking_data["room_availability"]
-
-                        if date in room_availability and room in room_availability[date]:
-                            room_availability[date][room] = [
-                                booking
-                                for booking in room_availability[date][room]
-                                if (formatted_start_time, formatted_end_time)
-                                != (booking[0], booking[1])
-                            ]
-
-                        # Remove the selected booking only
-                        booking_data["room_bookings"].pop(selected_booking_id)
-
-                        # Update CSV file
-                        bookings_to_write = list(booking_data[room_bookings].values())
-                        update_booking_csv_cancel(bookings_to_write)
-
-                        # Send cancellation email
-                        if send_cancellation_email(email, selected_booking_id, name, description, date, room, start_time, end_time):
-                            st.success(f"Reservation (Booking ID {selected_booking_id}) has been cancelled.")
-                            st.success("A confirmation email has been sent to the registered email.")
-                        else:
-                            st.success(f"Reservation (Booking ID {selected_booking_id}) has been cancelled.")
-                            st.warning("But confirmation email could not be sent to the registered email.")
-                    else:
-                        st.warning("Email address does not match. Cancellation failed.")
+    # Update CSV file on GitHub
+    branch_name = "main"
+    file_path = "ohmydaysOMD/test/booking_data.csv"
+    try:
+        repo = g.get_repo("ohmydaysOMD/test")  # Assuming 'g' is your authenticated GitHub instance
+        with open("ohmydaysOMD/test/booking_data.csv", "rb") as file:
+            content = file.read()
+        repo.update_file(file_path, "Update booking data", content, branch=branch_name)
+        st.success("Booking data updated successfully!")
+    except Exception as e:
+        st.error(f"Failed to update booking data: {e}")
 
 
 
