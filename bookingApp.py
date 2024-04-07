@@ -430,6 +430,9 @@ def update_booking_csv_cancel(bookings_to_write):
     ]))
     
     for booking_details in bookings_to_write:
+        # Add this line to inspect the content of booking_details
+        print("Content of booking_details:", booking_details)
+
         # Make sure booking_details contains the necessary keys
         booking_id = booking_details.get("booking_id", "")
         date = booking_details.get("date", "")
