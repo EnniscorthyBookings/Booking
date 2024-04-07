@@ -458,6 +458,7 @@ def update_booking_csv_cancel(bookings_to_write):
 
 
 
+
 def send_cancellation_email(user_email,booking_id,name,description,date1,selected_room,start_time,end_time):
     # Your email credentials
     sender_email = st.secrets["sender"]["email"]
