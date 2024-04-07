@@ -366,7 +366,7 @@ def cancel_room():
                         # Append booking info to the list
                         bookings_to_write.append([
                             str(booking_id),
-                            str(date.strftime('%Y-%m-%d')),
+                            str(date),
                             str(start_time),
                             str(end_time),
                             room,
