@@ -303,6 +303,73 @@ def is_upcoming(booking, current_datetime):
         return False
 
 
+# def cancel_room(booking_data, update_booking_csv):
+#     st.header("Cancel Room Reservation")
+    
+#     # Get the list of booked rooms
+#     booked_rooms = list(booking_data["room_bookings"].values())
+
+#     if not booked_rooms:
+#         st.warning("There are no existing room reservations to cancel.")
+#         return
+
+#     # Filter the reservations to include only upcoming bookings
+#     current_datetime = ctif
+#     upcoming_reservations = [booking for booking in booked_rooms if is_upcoming(booking, current_datetime)]
+
+#     if not upcoming_reservations:
+#         st.warning("No upcoming bookings to cancel.")
+#         return
+
+#     st.subheader("Select the reservation to cancel:")
+#     selected_reservation = st.selectbox("Upcoming Reservations", [f"Booking ID {booking_id}" for booking_id in booking_data["room_bookings"].keys() if is_upcoming(booking_data["room_bookings"][booking_id], current_datetime)], index=None)
+
+#     if selected_reservation:
+#         user_email_to_cancel = st.text_input("Enter Registered Mail used for booking:")
+
+#         if user_email_to_cancel:
+#             user_email_to_cancel = user_email_to_cancel.lower()
+#             if st.button("Cancel Reservation"):
+#                 selected_booking_id = float(selected_reservation.split()[-1].strip())
+
+#                 if selected_booking_id in booking_data["room_bookings"]:
+#                     reservation = booking_data["room_bookings"][selected_booking_id]
+#                     room = reservation["room"]
+#                     date = reservation["date"]
+#                     start_time = reservation["start_time"]
+#                     end_time = reservation["end_time"]
+#                     name = reservation["name"]
+#                     email = reservation["email"]
+#                     description = reservation["description"]
+
+#                     formatted_start_time = str(start_time)
+#                     formatted_end_time = str(end_time)
+#                     room_availability = booking_data["room_availability"]
+
+#                     if date in room_availability and room in room_availability[date]:
+#                         room_availability[date][room] = [
+#                             booking
+#                             for booking in room_availability[date][room]
+#                             if (formatted_start_time, formatted_end_time)
+#                             != (booking[0], booking[1])
+#                         ]
+
+#                     if user_email_to_cancel == reservation["email"].lower():
+#                         booking_data["room_bookings"].pop(selected_booking_id)
+
+#                         # Update CSV file
+#                         update_booking_csv(booking_data["room_bookings"])
+
+#                         # Send cancellation email
+#                         if send_cancellation_email(email, selected_booking_id, name, description, date, room, start_time, end_time):
+#                             st.success(f"Reservation (Booking ID {selected_booking_id}) has been cancelled.")
+#                             st.success("A confirmation email has been sent to the registered email.")
+#                         else:
+#                             st.success(f"Reservation (Booking ID {selected_booking_id}) has been cancelled.")
+#                             st.warning("But confirmation email could not be sent to the registered email.")
+#                     else:
+#                         st.warning("Email address does not match. Cancellation failed.")
+
 def cancel_room(booking_data, update_booking_csv):
     st.header("Cancel Room Reservation")
     
@@ -334,27 +401,28 @@ def cancel_room(booking_data, update_booking_csv):
 
                 if selected_booking_id in booking_data["room_bookings"]:
                     reservation = booking_data["room_bookings"][selected_booking_id]
-                    room = reservation["room"]
-                    date = reservation["date"]
-                    start_time = reservation["start_time"]
-                    end_time = reservation["end_time"]
-                    name = reservation["name"]
-                    email = reservation["email"]
-                    description = reservation["description"]
-
-                    formatted_start_time = str(start_time)
-                    formatted_end_time = str(end_time)
-                    room_availability = booking_data["room_availability"]
-
-                    if date in room_availability and room in room_availability[date]:
-                        room_availability[date][room] = [
-                            booking
-                            for booking in room_availability[date][room]
-                            if (formatted_start_time, formatted_end_time)
-                            != (booking[0], booking[1])
-                        ]
 
                     if user_email_to_cancel == reservation["email"].lower():
+                        room = reservation["room"]
+                        date = reservation["date"]
+                        start_time = reservation["start_time"]
+                        end_time = reservation["end_time"]
+                        name = reservation["name"]
+                        email = reservation["email"]
+                        description = reservation["description"]
+
+                        formatted_start_time = str(start_time)
+                        formatted_end_time = str(end_time)
+                        room_availability = booking_data["room_availability"]
+
+                        if date in room_availability and room in room_availability[date]:
+                            room_availability[date][room] = [
+                                booking
+                                for booking in room_availability[date][room]
+                                if (formatted_start_time, formatted_end_time)
+                                != (booking[0], booking[1])
+                            ]
+
                         booking_data["room_bookings"].pop(selected_booking_id)
 
                         # Update CSV file
@@ -371,6 +439,32 @@ def cancel_room(booking_data, update_booking_csv):
                         st.warning("Email address does not match. Cancellation failed.")
 
 
+def update_booking_csv(bookings_to_write):
+    # Convert bookings_to_write to CSV string
+    csv_content = []
+    csv_content.append(",".join([
+        "booking_id",
+        "date",
+        "start_time",
+        "end_time",
+        "room",
+        "name",
+        "email",
+        "description"
+    ]))
+    
+    for booking in bookings_to_write:
+        try:
+            csv_content.append(",".join(map(str, booking)))
+        except Exception as e:
+            print(f"Error converting booking to string: {e}")
+            print("Booking contents:", booking)
+            # Handle the error or skip this booking if necessary
+
+    # Update CSV file on GitHub
+    content = "\n".join(csv_content)
+    file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
+    repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
 def update_room_availability(date, room, start_time, end_time):
     # Retrieve room availability data from booking_data
@@ -411,65 +505,40 @@ def update_room_availability(date, room, start_time, end_time):
 #     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
 #     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
-def update_booking_csv(bookings_to_write):
-    # Convert bookings_to_write to CSV string
-    csv_content = []
-    csv_content.append(",".join([
-        "booking_id",
-        "date",
-        "start_time",
-        "end_time",
-        "room",
-        "name",
-        "email",
-        "description"
-    ]))
-    
-    for booking in bookings_to_write:
-        try:
-            csv_content.append(",".join(map(str, booking)))
-        except Exception as e:
-            print(f"Error converting booking to string: {e}")
-            print("Booking contents:", booking)
-            # Handle the error or skip this booking if necessary
-
-    # Update CSV file on GitHub
-    content = "\n".join(csv_content)
-    file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
-    repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
 
-def update_booking_csv_cancel(bookings_to_write, github_token, repo_path):
-    fieldnames = [
-        "booking_id",
-        "date",
-        "start_time",
-        "end_time",
-        "room",
-        "name",
-        "email",
-        "description",
-    ]
 
-    # Write content to CSV file
-    with open(booking_data_file, "w", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerow(fieldnames)  # Write header
-        writer.writerows(bookings_to_write)  # Write all booking data at once
+# def update_booking_csv_cancel(bookings_to_write, github_token, repo_path):
+#     fieldnames = [
+#         "booking_id",
+#         "date",
+#         "start_time",
+#         "end_time",
+#         "room",
+#         "name",
+#         "email",
+#         "description",
+#     ]
 
-    # Read updated content from the CSV file
-    with open(booking_data_file, "r") as file:
-        content = file.read()
+#     # Write content to CSV file
+#     with open(booking_data_file, "w", newline="") as file:
+#         writer = csv.writer(file)
+#         writer.writerow(fieldnames)  # Write header
+#         writer.writerows(bookings_to_write)  # Write all booking data at once
 
-    # Authenticate with GitHub using token
-    g = Github(github_token)
+#     # Read updated content from the CSV file
+#     with open(booking_data_file, "r") as file:
+#         content = file.read()
 
-    # Get the repository
-    repo = g.get_repo(repo_path)
+#     # Authenticate with GitHub using token
+#     g = Github(github_token)
 
-    # Update CSV file on GitHub
-    file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
-    repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
+#     # Get the repository
+#     repo = g.get_repo(repo_path)
+
+#     # Update CSV file on GitHub
+#     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
+#     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
 
 
 
