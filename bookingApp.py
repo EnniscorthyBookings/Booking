@@ -359,7 +359,8 @@ def cancel_room():
                         update_room_availability(date, room, start_time, end_time)
 
                         # Update CSV file
-                        update_booking_csv_cancel(booking_data["room_bookings"])
+                       # update_booking_csv_cancel(booking_data["room_bookings"])
+                        update_booking_csv_cancel(booking_data)
 
                         # Send cancellation email
                         if send_cancellation_email(email, selected_booking_id, name, description, date, room, start_time, end_time):
