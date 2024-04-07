@@ -430,9 +430,8 @@ def update_booking_csv_cancel(bookings_to_write):
     ]))
 
     for booking in bookings_to_write:
-        st.write("Current booking:", booking)  # Display current booking
-        booking_id = booking.get("booking_id", "")
-        st.write("Booking ID:", booking_id)  # Display booking ID
+        print("Current booking:", booking)  # Add this line for debugging
+        booking_id = str(booking.get("booking_id", ""))
         date = booking.get("date", "")
         start_time = booking.get("start_time", "")
         end_time = booking.get("end_time", "")
@@ -440,9 +439,9 @@ def update_booking_csv_cancel(bookings_to_write):
         name = booking.get("name", "")
         email = booking.get("email", "")
         description = booking.get("description", "")
-
+    
         booking_row = [
-            str(booking_id),
+            booking_id,
             str(date),
             str(start_time),
             str(end_time),
@@ -452,6 +451,7 @@ def update_booking_csv_cancel(bookings_to_write):
             str(description)
         ]
         csv_content.append(",".join(booking_row))
+
 
     # Update CSV file on GitHub
     content = "\n".join(csv_content)
