@@ -199,7 +199,7 @@ def book_room():
                                         name,
                                         email,
                                         description
-                                    })
+                                    ])
                                     
                                     # Update CSV file on GitHub
                                     update_booking_csv(bookings_to_write)
