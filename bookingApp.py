@@ -415,10 +415,8 @@ def update_booking_csv(bookings_to_write):
 
 import streamlit as st  # Import Streamlit library
 
-def update_booking_csv_cancel(bookings_to_write):
-    # Convert bookings_to_write to CSV string
-    csv_content = []
-    csv_content.append(",".join([
+def update_booking_csv_cancel(bookings_to_write, github_token, repo_path):
+    fieldnames = [
         "booking_id",
         "date",
         "start_time",
@@ -426,38 +424,28 @@ def update_booking_csv_cancel(bookings_to_write):
         "room",
         "name",
         "email",
-        "description"
-    ]))
+        "description",
+    ]
 
-    for booking in bookings_to_write:
-        print("Current booking:", booking)  # Add this line for debugging
-        booking_id = str(booking.get("booking_id", ""))
-        date = booking.get("date", "")
-        start_time = booking.get("start_time", "")
-        end_time = booking.get("end_time", "")
-        room = booking.get("room", "")
-        name = booking.get("name", "")
-        email = booking.get("email", "")
-        description = booking.get("description", "")
-    
-        booking_row = [
-            booking_id,
-            str(date),
-            str(start_time),
-            str(end_time),
-            str(room),
-            str(name),
-            str(email),
-            str(description)
-        ]
-        csv_content.append(",".join(booking_row))
+    # Write content to CSV file
+    with open(booking_data_file, "w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(fieldnames)  # Write header
+        writer.writerows(bookings_to_write)  # Write all booking data at once
 
+    # Read updated content from the CSV file
+    with open(booking_data_file, "r") as file:
+        content = file.read()
+
+    # Authenticate with GitHub using token
+    g = Github(github_token)
+
+    # Get the repository
+    repo = g.get_repo(repo_path)
 
     # Update CSV file on GitHub
-    content = "\n".join(csv_content)
     file = repo.get_contents("ohmydaysOMD/test/booking_data.csv", ref="main")
     repo.update_file(file.path, "Booking Data Updated", content, file.sha, branch="main")
-
 
 
 
