@@ -324,7 +324,7 @@ def cancel_room():
 
                     if user_email_to_cancel == reservation["email"].lower():
                         booking_data["room_bookings"].pop(selected_booking_id)
-                        st.write(booking_data)
+                        st.write(booking_data["room_bookings"])
 
                         # Update CSV file
                         update_booking_csv_cancel(booking_data["room_bookings"])
