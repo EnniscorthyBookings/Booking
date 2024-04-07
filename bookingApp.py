@@ -301,7 +301,7 @@ def is_upcoming(booking, current_datetime):
     except ValueError:
         st.warning(f"Invalid date or time format found: {date_str} {time_str}. Skipping this booking.")
         return False
-import streamlit as st
+
 
 def cancel_room(booking_data, update_booking_csv):
     st.header("Cancel Room Reservation")
