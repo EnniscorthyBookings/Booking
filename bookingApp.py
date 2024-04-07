@@ -189,6 +189,9 @@ def book_room():
                                         "description": description,
                                     }
 
+                                    st.write(booking_data)
+    
+
                                     ########
                                     # bookings_to_write.append([
                                     #     str(booking_id),
