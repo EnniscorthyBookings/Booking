@@ -254,25 +254,25 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
             }
 
       
-           booking_data["room_bookings"]
+  #  booking_data["room_bookings"]
 
-    for i in range(freqInt):  # Repeat for the specified frequency
-        new_date = date + timedelta(days=i * interval)
-        new_booking_id = original_booking_id + (i * 0.001)
-        booking_data["room_bookings"][new_booking_id] = {
-            "booking_id": new_booking_id,
-            "date": str(new_date),
-            "start_time": str(start_time),
-            "end_time": str(end_time),
-            "room": room,
-            "name": name,
-            "email": email,
-            "description": description,
-        }
-
-   
-    # Update CSV file on GitHub
-    update_booking_csv(booking_data["room_bookings"])
+        for i in range(freqInt):  # Repeat for the specified frequency
+            new_date = date + timedelta(days=i * interval)
+            new_booking_id = original_booking_id + (i * 0.001)
+            booking_data["room_bookings"][new_booking_id] = {
+                "booking_id": new_booking_id,
+                "date": str(new_date),
+                "start_time": str(start_time),
+                "end_time": str(end_time),
+                "room": room,
+                "name": name,
+                "email": email,
+                "description": description,
+            }
+    
+       
+        # Update CSV file on GitHub
+        update_booking_csv(booking_data["room_bookings"])
 
         
 def is_upcoming(booking, current_datetime):
