@@ -226,21 +226,48 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
         interval = 28
         freqInt = 12
 
-        st.write(booking_data["room_bookings"])
 
-        for i in range(freqInt):  # Repeat for the specified frequency
-            new_date = date + timedelta(days=i * interval)
-            new_booking_id = original_booking_id + (i * 0.001)
-            booking_data["room_bookings"][new_booking_id] = {
-                "booking_id": new_booking_id,
-                "date": str(new_date),
-                "start_time": str(start_time),
-                "end_time": str(end_time),
-                "room": room,
-                "name": name,
-                "email": email,
-                "description": description,
+        booking_data = {"room_bookings": {}, "room_availability": {}}
+
+        # Iterate through rows in the CSV file
+        for row in reader:
+            booking_id = float(row["booking_id"])
+            booking_data["room_bookings"][booking_id] = {
+                "booking_id": booking_id,
+                "date": row["date"],
+                "start_time": row["start_time"],
+                "end_time": row["end_time"],
+                "room": row["room"],
+                "name": row["name"],
+                "email": row["email"],
+                "description": row["description"],
             }
+    
+            # Update room availability data
+            if row["date"] not in booking_data["room_availability"]:
+                booking_data["room_availability"][row["date"]] = {}
+            if row["room"] not in booking_data["room_availability"][row["date"]]:
+                booking_data["room_availability"][row["date"]][row["room"]] = []
+            booking_data["room_availability"][row["date"]][row["room"]].append(
+                (row["start_time"], row["end_time"])
+            )
+
+        
+    st.write(booking_data["room_bookings"])
+
+    for i in range(freqInt):  # Repeat for the specified frequency
+        new_date = date + timedelta(days=i * interval)
+        new_booking_id = original_booking_id + (i * 0.001)
+        booking_data["room_bookings"][new_booking_id] = {
+            "booking_id": new_booking_id,
+            "date": str(new_date),
+            "start_time": str(start_time),
+            "end_time": str(end_time),
+            "room": room,
+            "name": name,
+            "email": email,
+            "description": description,
+        }
 
     st.write("After ###################################")
 
