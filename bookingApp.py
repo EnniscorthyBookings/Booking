@@ -254,7 +254,7 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
             }
 
       
-    dict1 = json.loads(booking_data["room_bookings"])
+    dict1 = booking_data["room_bookings"]
     for i in range(freqInt):  # Repeat for the specified frequency
         new_date = date + timedelta(days=i * interval)
         new_booking_id = original_booking_id + (i * 0.001)
@@ -271,7 +271,7 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
 
     # Parse JSON variables into dictionaries
     
-    dict2 = json.loads(booking_data["room_bookings"])
+    dict2 = booking_data["room_bookings"]
     
     # Create a new dictionary to hold the merged contents
     merged_dict = {}
