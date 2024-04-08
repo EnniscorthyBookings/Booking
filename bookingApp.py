@@ -254,7 +254,7 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
             }
 
       
-       booking_data["room_bookings"]
+           booking_data["room_bookings"]
 
     for i in range(freqInt):  # Repeat for the specified frequency
         new_date = date + timedelta(days=i * interval)
