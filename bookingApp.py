@@ -234,7 +234,7 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
                 "date": str(date),
                 "start_time": str(start_time),
                 "end_time": str(end_time),
-                "room": selected_room,
+                "room": room,
                 "name": name,
                 "email": email,
                 "description": description,
