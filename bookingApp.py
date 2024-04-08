@@ -266,65 +266,6 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
     
     # Update CSV file on GitHub
     update_booking_csv(booking_data["room_bookings"])
-# def repeat_bookings(original_booking_id, date, start_time, end_time, room, description, name, email, repeat_frequency):
-#     booking_data = {"room_bookings": {}}
-    
-#     if repeat_frequency == "Weekly":
-#         interval = 7
-#         freqInt = 52
-#     elif repeat_frequency == "Bi-Weekly":
-#         interval = 14
-#         freqInt = 26
-#     elif repeat_frequency == "Monthly":
-#         interval = 28
-#         freqInt = 12
-
-
-#         # Get the contents of the CSV file
-#         contents = repo.get_contents(booking_data_file)
-    
-#         # Decode and read the content of the file
-#         csv_content = contents.decoded_content.decode('utf-8').splitlines()
-    
-#         # Parse CSV content using csv.DictReader
-#         reader = csv.DictReader(csv_content)
-    
-#         booking_data = {"room_bookings": {}, "room_availability": {}}
-    
-#         # Iterate through rows in the CSV file
-#         for row in reader:
-#             booking_id = float(row["booking_id"])
-#             booking_data["room_bookings"][booking_id] = {
-#                 "booking_id": booking_id,
-#                 "date": row["date"],
-#                 "start_time": row["start_time"],
-#                 "end_time": row["end_time"],
-#                 "room": row["room"],
-#                 "name": row["name"],
-#                 "email": row["email"],
-#                 "description": row["description"],
-#             }
-
-      
-
-#         for i in range(freqInt):  # Repeat for the specified frequency
-#             new_date = date + timedelta(days=i * interval)
-#             new_booking_id = original_booking_id + (i * 0.001)
-#             booking_data["room_bookings"][new_booking_id] = {
-#                 "booking_id": new_booking_id,
-#                 "date": str(new_date),
-#                 "start_time": str(start_time),
-#                 "end_time": str(end_time),
-#                 "room": room,
-#                 "name": name,
-#                 "email": email,
-#                 "description": description,
-#             }
-    
-       
-#         # Update CSV file on GitHub
-#     update_booking_csv(booking_data["room_bookings"])
-
         
 def is_upcoming(booking, current_datetime):
     date_str = booking["date"]
@@ -419,36 +360,7 @@ def cancel_room():
                         st.warning("Email address does not match. Cancellation failed.")
                         
 
-    
-# def update_booking_csv(bookings_to_write):
-#     # Convert bookings_to_write to CSV string
-#     csv_content = []
-#     csv_content.append(",".join([
-#         "booking_id",
-#         "date",
-#         "start_time",
-#         "end_time",
-#         "room",
-#         "name",
-#         "email",
-#         "description"
-#     ]))
-#     for booking in bookings_to_write:
-#         csv_content.append(",".join(map(str, booking)))
-
-#     # Update CSV file on GitHub
-#     content = "\n".join(csv_content).encode()  # Convert content to bytes
-#     file_path = "ohmydaysOMD/test/booking_data.csv"
-#     branch_name = "main"
-#     try:
-#         repo = g.get_repo("ohmydaysOMD/test")  # Assuming 'g' is your authenticated GitHub instance
-#         file = repo.get_contents(file_path, ref=branch_name)
-#         repo.update_file(file_path, "Update booking data", content, file.sha, branch=branch_name)
-#         st.success("")
-#     except Exception as e:
-#         st.error(f"Failed to update booking data: {e}")
-
-    
+  
 def update_booking_csv(bookings_to_write):
   # Convert dictionary to JSON string
     bookings_json_string = json.dumps(bookings_to_write)
