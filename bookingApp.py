@@ -45,7 +45,7 @@ try:
     # Iterate through rows in the CSV file
     for row in reader:
         booking_id = float(row["booking_id"])
-        booking_data["room_bookings"][booking_id] = {
+        b[booking_id] = {
             "booking_id": booking_id,
             "date": row["date"],
             "start_time": row["start_time"],
@@ -178,7 +178,7 @@ def book_room():
                             else:
                                 if st.button("Book Room"):
                                     booking_id = generate_random_booking_id()  # Generate a random 4-digit booking ID
-                                    booking_data["room_bookings"][booking_id] = {
+                                    b[booking_id] = {
                                         "booking_id": booking_id,
                                         "date": str(date),
                                         "start_time": str(start_time),
@@ -205,7 +205,7 @@ def book_room():
                                             st.success(f"Booking successful! Your booking ID is {booking_id}.")
                                             st.warning("But confirmation email could not be sent to the registered mail.")
                                     else:
-                                        update_booking_csv(booking_data["room_bookings"])
+                                        update_booking_csv(b)
                                         # Send confirmation email
                                         if send_confirmation_email(email, booking_id, name, description, selected_room, start_time.strftime('%H:%M:%S'), end_time):
                                             st.success(f"Booking successful! Your booking ID is {booking_id}.")
@@ -242,7 +242,7 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
         # Iterate through rows in the CSV file
         for row in reader:
             booking_id = float(row["booking_id"])
-            booking_data["room_bookings"][booking_id] = {
+            b[booking_id] = {
                 "booking_id": booking_id,
                 "date": row["date"],
                 "start_time": row["start_time"],
@@ -254,7 +254,7 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
             }
 
       
-   booking_data["room_bookings"]
+       booking_data["room_bookings"]
 
     for i in range(freqInt):  # Repeat for the specified frequency
         new_date = date + timedelta(days=i * interval)
