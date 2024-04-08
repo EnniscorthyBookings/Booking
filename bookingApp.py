@@ -191,7 +191,7 @@ def book_room():
 
                                     
                                     # Update CSV file on GitHub
-                                    update_booking_csv(booking_data["room_bookings"])
+                                    
                                    # update_booking_csv(booking_data)
                                     
                                     if repeat_booking:
@@ -205,6 +205,7 @@ def book_room():
                                             st.success(f"Booking successful! Your booking ID is {booking_id}.")
                                             st.warning("But confirmation email could not be sent to the registered mail.")
                                     else:
+                                        update_booking_csv(booking_data["room_bookings"])
                                         # Send confirmation email
                                         if send_confirmation_email(email, booking_id, name, description, selected_room, start_time.strftime('%H:%M:%S'), end_time):
                                             st.success(f"Booking successful! Your booking ID is {booking_id}.")
@@ -391,7 +392,7 @@ def cancel_room():
 #         repo = g.get_repo("ohmydaysOMD/test")  # Assuming 'g' is your authenticated GitHub instance
 #         file = repo.get_contents(file_path, ref=branch_name)
 #         repo.update_file(file_path, "Update booking data", content, file.sha, branch=branch_name)
-#         st.success("Booking data updated successfully!")
+#         st.success("")
 #     except Exception as e:
 #         st.error(f"Failed to update booking data: {e}")
 
