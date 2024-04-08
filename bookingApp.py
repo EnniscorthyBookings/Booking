@@ -191,7 +191,7 @@ def book_room():
 
                                     
                                     # Update CSV file on GitHub
-                                    update_booking_csv_cancel(booking_data["room_bookings"])
+                                    update_booking_csv(booking_data["room_bookings"])
                                    # update_booking_csv(booking_data)
                                     
                                     if repeat_booking:
@@ -253,7 +253,6 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
             }
 
         
-    st.write(booking_data["room_bookings"])
 
     for i in range(freqInt):  # Repeat for the specified frequency
         new_date = date + timedelta(days=i * interval)
@@ -269,16 +268,10 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
             "description": description,
         }
 
-    st.write("After ###################################")
-
-    st.write(booking_data["room_bookings"])
-
     
     # Update CSV file on GitHub
-    update_booking_csv_cancel(booking_data["room_bookings"])
+    update_booking_csv(booking_data["room_bookings"])
  
-
-
         
 def is_upcoming(booking, current_datetime):
     date_str = booking["date"]
@@ -351,7 +344,7 @@ def cancel_room():
                        # st.write(booking_data["room_bookings"])
 
                         # Update CSV file
-                        update_booking_csv_cancel(booking_data["room_bookings"])
+                        update_booking_csv(booking_data["room_bookings"])
 
                         # Update room availability
                         if str(date) not in booking_data["room_availability"]:
@@ -374,36 +367,36 @@ def cancel_room():
                         
 
     
-def update_booking_csv(bookings_to_write):
-    # Convert bookings_to_write to CSV string
-    csv_content = []
-    csv_content.append(",".join([
-        "booking_id",
-        "date",
-        "start_time",
-        "end_time",
-        "room",
-        "name",
-        "email",
-        "description"
-    ]))
-    for booking in bookings_to_write:
-        csv_content.append(",".join(map(str, booking)))
+# def update_booking_csv(bookings_to_write):
+#     # Convert bookings_to_write to CSV string
+#     csv_content = []
+#     csv_content.append(",".join([
+#         "booking_id",
+#         "date",
+#         "start_time",
+#         "end_time",
+#         "room",
+#         "name",
+#         "email",
+#         "description"
+#     ]))
+#     for booking in bookings_to_write:
+#         csv_content.append(",".join(map(str, booking)))
 
-    # Update CSV file on GitHub
-    content = "\n".join(csv_content).encode()  # Convert content to bytes
-    file_path = "ohmydaysOMD/test/booking_data.csv"
-    branch_name = "main"
-    try:
-        repo = g.get_repo("ohmydaysOMD/test")  # Assuming 'g' is your authenticated GitHub instance
-        file = repo.get_contents(file_path, ref=branch_name)
-        repo.update_file(file_path, "Update booking data", content, file.sha, branch=branch_name)
-        st.success("Booking data updated successfully!")
-    except Exception as e:
-        st.error(f"Failed to update booking data: {e}")
+#     # Update CSV file on GitHub
+#     content = "\n".join(csv_content).encode()  # Convert content to bytes
+#     file_path = "ohmydaysOMD/test/booking_data.csv"
+#     branch_name = "main"
+#     try:
+#         repo = g.get_repo("ohmydaysOMD/test")  # Assuming 'g' is your authenticated GitHub instance
+#         file = repo.get_contents(file_path, ref=branch_name)
+#         repo.update_file(file_path, "Update booking data", content, file.sha, branch=branch_name)
+#         st.success("Booking data updated successfully!")
+#     except Exception as e:
+#         st.error(f"Failed to update booking data: {e}")
 
     
-def update_booking_csv_cancel(bookings_to_write):
+def update_booking_csv(bookings_to_write):
   # Convert dictionary to JSON string
     bookings_json_string = json.dumps(bookings_to_write)
     
