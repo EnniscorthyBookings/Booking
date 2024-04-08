@@ -226,6 +226,8 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
         interval = 28
         freqInt = 12
 
+        st.write(booking_data["room_bookings"])
+
         for i in range(freqInt):  # Repeat for the specified frequency
             new_date = date + timedelta(days=i * interval)
             new_booking_id = original_booking_id + (i * 0.001)
@@ -239,51 +241,15 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
                 "email": email,
                 "description": description,
             }
-# nerate_random_booking_id()  # Generate a random 4-digit booking ID
-#     booking_data["room_bookings"][booking_id] = {
-#         "booking_id": booking_id,
-#         "date": str(date),
-#         "start_time": str(start_time),
-#         "end_time": str(end_time),
-#         "room": selected_room,
-#         "name": name,
-#         "email": email,
-#         "description": description,
-#     }
+
+    st.write("After ###################################")
+
+    st.write(booking_data["room_bookings"])
 
     
     # Update CSV file on GitHub
     update_booking_csv(booking_data["room_bookings"])
-    # bookings_to_write = []  # List to store booking data to write to CSV
-
-    # for i in range(freqInt):  # Repeat for the specified frequency
-    #     new_date = date + timedelta(days=i * interval)
-    #     new_booking_id = original_booking_id + (i * 0.001)
-    #     booking_data["room_bookings"][new_booking_id] = {
-    #         "booking_id": new_booking_id,
-    #         "date": str(new_date.strftime('%Y-%m-%d')),
-    #         "start_time": str(start_time),
-    #         "end_time": str(end_time),
-    #         "room": room,
-    #         "name": name,
-    #         "email": email,
-    #         "description": description,
-    #     }
-        
-    #     # Append booking info to the list
-    #     bookings_to_write.append([
-    #         str(new_booking_id),
-    #         str(new_date.strftime('%Y-%m-%d')),
-    #         str(start_time),
-    #         str(end_time),
-    #         room,
-    #         name,
-    #         email,
-    #         description
-    #     ])
-    
-    # # Save the repeated booking data to the CSV file
-    # update_booking_csv(bookings_to_write)
+ 
 
 
         
