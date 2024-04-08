@@ -205,7 +205,7 @@ def book_room():
                                             st.success(f"Booking successful! Your booking ID is {booking_id}.")
                                             st.warning("But confirmation email could not be sent to the registered mail.")
                                     else:
-                                        update_booking_csv(b)
+                                        update_booking_csv(booking_data["room_bookings"])
                                         # Send confirmation email
                                         if send_confirmation_email(email, booking_id, name, description, selected_room, start_time.strftime('%H:%M:%S'), end_time):
                                             st.success(f"Booking successful! Your booking ID is {booking_id}.")
