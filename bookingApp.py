@@ -286,7 +286,7 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
     st.write(merged_json)
     # Update CSV file on GitHub
     #update_booking_csv(booking_data["room_bookings"])
-    update_booking_csv(merged_json["room_bookings"])
+    update_booking_csv(merged_json)
         
 def is_upcoming(booking, current_datetime):
     date_str = booking["date"]
