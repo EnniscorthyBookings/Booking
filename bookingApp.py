@@ -254,7 +254,8 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
             }
 
       
-    dict1 = booking_data["room_bookings"]
+   booking_data["room_bookings"]
+
     for i in range(freqInt):  # Repeat for the specified frequency
         new_date = date + timedelta(days=i * interval)
         new_booking_id = original_booking_id + (i * 0.001)
@@ -269,24 +270,10 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
             "description": description,
         }
 
-    # Parse JSON variables into dictionaries
-    
-    dict2 = booking_data["room_bookings"]
-    
-    # Create a new dictionary to hold the merged contents
-    merged_dict = {}
-    
-    # Update the merged dictionary with the contents of dict1 and dict2
-    merged_dict.update(dict1)
-    merged_dict.update(dict2)
-    
-    # Convert the merged dictionary back to JSON
-    merged_json = json.dumps(merged_dict)
-    
-    st.write(merged_json)
+   
     # Update CSV file on GitHub
-    #update_booking_csv(booking_data["room_bookings"])
-    update_booking_csv(merged_json)
+    update_booking_csv(booking_data["room_bookings"])
+
         
 def is_upcoming(booking, current_datetime):
     date_str = booking["date"]
