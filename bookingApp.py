@@ -231,7 +231,7 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
             new_booking_id = original_booking_id + (i * 0.001)
             booking_data["room_bookings"][new_booking_id] = {
                 "booking_id": new_booking_id,
-                "date": str(date),
+                "date": str(new_date),
                 "start_time": str(start_time),
                 "end_time": str(end_time),
                 "room": room,
@@ -253,7 +253,7 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
 
     
     # Update CSV file on GitHub
-    update_booking_csv_cancel(booking_data["room_bookings"])
+    update_booking_csv(booking_data["room_bookings"])
     # bookings_to_write = []  # List to store booking data to write to CSV
 
     # for i in range(freqInt):  # Repeat for the specified frequency
