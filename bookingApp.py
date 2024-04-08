@@ -45,7 +45,7 @@ try:
     # Iterate through rows in the CSV file
     for row in reader:
         booking_id = float(row["booking_id"])
-        b[booking_id] = {
+        booking_data["room_bookings"][booking_id] = {
             "booking_id": booking_id,
             "date": row["date"],
             "start_time": row["start_time"],
@@ -178,7 +178,7 @@ def book_room():
                             else:
                                 if st.button("Book Room"):
                                     booking_id = generate_random_booking_id()  # Generate a random 4-digit booking ID
-                                    b[booking_id] = {
+                                    booking_data["room_bookings"][booking_id] = {
                                         "booking_id": booking_id,
                                         "date": str(date),
                                         "start_time": str(start_time),
@@ -242,7 +242,7 @@ def repeat_bookings(original_booking_id, date, start_time, end_time, room, descr
         # Iterate through rows in the CSV file
         for row in reader:
             booking_id = float(row["booking_id"])
-            b[booking_id] = {
+            booking_data["room_bookings"][booking_id] = {
                 "booking_id": booking_id,
                 "date": row["date"],
                 "start_time": row["start_time"],
