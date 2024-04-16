@@ -135,13 +135,9 @@ room_capacity = {
 
 def book_room():
     st.header("Book a Room or a Desk")
-    # Function to load and display the image
-       # Checkbox to toggle image display
-    show_image = st.toggle("Display Floor Layout")
-
 
     def display_image():
-        image = Image.open("ohmydaysOMD/test/Enniscorthy PCC.png")
+        image = Image.open("Enniscorthy PCC.png")
         st.image(image, channels="RGB", use_column_width=True)
     
     # Main Streamlit code
