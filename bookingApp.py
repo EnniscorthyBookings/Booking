@@ -28,7 +28,7 @@ repo = g.get_repo('ohmydaysOMD/test')
 
 
 # Define file paths for storing booking data
-booking_data_file = "ohmydaysOMD/test/booking_data.csv"
+booking_data_file = "ohmydaysOMD/test/booking_data_enniscorthy.csv"
 # Load existing booking data from the CSV file
 try:
     # Get the contents of the CSV file
@@ -45,7 +45,7 @@ try:
     # Iterate through rows in the CSV file
     for row in reader:
         booking_id = float(row["booking_id"])
-        booking_data["room_bookings"][booking_id] = {
+        .["room_bookings"][booking_id] = {
             "booking_id": booking_id,
             "date": row["date"],
             "start_time": row["start_time"],
@@ -389,7 +389,7 @@ def update_booking_csv(bookings_to_write):
         
     # Update CSV file on GitHub
     content = csv_string # "\n".join(bookings_to_write).encode()  # Convert content to bytes
-    file_path = "ohmydaysOMD/test/booking_data.csv"
+    file_path = "ohmydaysOMD/test/booking_data_enniscorthy.csv"
     branch_name = "main"
     try:
         repo = g.get_repo("ohmydaysOMD/test")  # Assuming 'g' is your authenticated GitHub instance
