@@ -139,23 +139,20 @@ def book_room():
        # Checkbox to toggle image display
     show_image = st.toggle("Display Floor Layout")
 
+
+    def display_image():
+        image = Image.open("ohmydaysOMD/test/Enniscorthy PCC.png")
+        st.image(image, channels="RGB", use_column_width=True)
+    
+    # Main Streamlit code
+   # st.title("Display Layout")
+    
+    # Checkbox to toggle image display
+    show_image = st.toggle("Display Floor Layout")
+    
     # If the checkbox is checked, display the image
     if show_image:
-        try:
-            
-            def display_image():
-                image = Image.open("ohmydaysOMD/test/Enniscorthy PCC.png")
-                st.image(image, channels="RGB", use_column_width=True)
-            
-            # Main Streamlit code
-           # st.title("Display Layout")
-            
-            # Checkbox to toggle image display
-            show_image = st.toggle("Display Floor Layout")
-            
-            # If the checkbox is checked, display the image
-            if show_image:
-                display_image()
+        display_image()
     date = st.date_input("Select the Date:", min_value=current_time_ireland.date(), value=None, format="DD/MM/YYYY")
     current_date = current_time_ireland.date()
     if date:
