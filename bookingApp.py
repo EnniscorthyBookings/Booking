@@ -622,7 +622,7 @@ def send_confirmation_email(user_email, booking_id, name, description, selected_
         return False
 
 st.set_page_config(
-    page_title="Meeting Room Booking",
+    page_title="Room & Desk Booking",
     page_icon=":calendar:",
     initial_sidebar_state="expanded",
     layout="wide",
@@ -637,7 +637,7 @@ if width > 800:
     # if authenticate(password):
     #     st.empty()  # Clear the placeholder
     #     st.success("Logged in successfully!")
-    st.title("Meeting Room & Desk Booking System 🖥️")
+    st.title("Room & Desk Booking System 🖥️")
     
     date = current_time_ireland.date()
     time1=current_time_ireland.time()
@@ -657,7 +657,7 @@ if width > 800:
     elif menu_choice == "View Bookings":
         view_reservations()
 else:
-    st.title("Meeting Room & Desk Booking System 🖥️")
+    st.title("Room & Desk Booking System 🖥️")
 
     date = current_time_ireland.date()
     time1=current_time_ireland.time()
