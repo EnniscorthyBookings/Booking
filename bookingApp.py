@@ -1,12 +1,17 @@
 import streamlit as st
 from PIL import Image
 
-# Load your PNG image
-image = Image.open("Enniscorthy PCC.png")
+# Function to load and display the image
+def display_image():
+    image = Image.open("Enniscorthy PCC.png")
+    st.image(image, channels="RGB", use_column_width=True)
 
-# Display the image with high quality
-st.image(image, channels="RGB", use_column_width=True)
+# Main Streamlit code
+st.title("Display Layout")
 
+# Button to trigger image display
+if st.button("Display Image"):
+    display_image()
 
 
 # import streamlit as st
