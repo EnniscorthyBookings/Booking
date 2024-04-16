@@ -145,7 +145,7 @@ def book_room():
 
     ###
     
-    file_path2 = "ohmydaysOMD/test/Enniscorthy PCC.png"
+    file_path2 = "Enniscorthy PCC.png"
     branch_name = "main"
 
     ######
@@ -158,8 +158,10 @@ def book_room():
             st.write(file2)
             #image = Image.open(file2)
             #st.image(image, channels="RGB", use_column_width=True)
-            image_bytes = file2.decoded_content
-            image = Image.open(BytesIO(image_bytes))
+            image_bytes = BytesIO(file2.content)
+        
+            # Display the image
+            image = Image.open(image_bytes)
             st.image(image, caption="Floor Layout", use_column_width=True)
             
             # Display the image
