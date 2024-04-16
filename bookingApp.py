@@ -1,57 +1,11 @@
 import streamlit as st
+from PIL import Image
 
-def main():
-    st.title("Building Layout with Desks")
+# Load your PNG image
+image = Image.open("Enniscorthy PCC.png")
 
-    # Upload image
-    uploaded_image = st.file_uploader("Upload building layout image", type=["jpg", "png"])
-
-    if uploaded_image is not None:
-        st.image(uploaded_image, caption="Uploaded Image", use_column_width=True)
-
-        # Define clickable areas for desks
-        desk_areas = {
-            "Desk 1": (100, 200, 150, 250),  # Example coordinates (x1, y1, x2, y2)
-            "Desk 2": (200, 300, 250, 350),
-            # Add more desks as needed
-        }
-
-        image_location = st.empty()
-        image_location.image(uploaded_image, caption="Uploaded Image", use_column_width=True, output_format='PNG')
-
-        # Add CSS to overlay clickable areas on top of the image
-        image_location.markdown(
-            """
-            <style>
-            .desk-area {
-                position: absolute;
-                background-color: rgba(255, 0, 0, 0.3);
-                border: 2px solid red;
-                pointer-events: auto;
-            }
-            </style>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        # Display clickable desks
-        for desk_name, (x1, y1, x2, y2) in desk_areas.items():
-            desk_area_style = f"top: {y1}px; left: {x1}px; width: {x2 - x1}px; height: {y2 - y1}px;"
-            image_location.markdown(
-                f'<div class="desk-area" style="{desk_area_style}" onclick="select_desk(\'{desk_name}\')"></div>',
-                unsafe_allow_html=True,
-            )
-
-@st.cache(allow_output_mutation=True)
-def on_desk_click(desk_name):
-    return st.empty()
-
-def select_desk(desk_name):
-    output = on_desk_click(desk_name)
-    output.write(f"You selected {desk_name}")
-
-if __name__ == "__main__":
-    main()
+# Display the image with high quality
+st.image(image, channels="RGB", use_column_width=True)
 
 
 
