@@ -45,7 +45,7 @@ try:
     # Iterate through rows in the CSV file
     for row in reader:
         booking_id = float(row["booking_id"])
-        ["room_bookings"][booking_id] = {
+        booking_data["room_bookings"][booking_id] = {
             "booking_id": booking_id,
             "date": row["date"],
             "start_time": row["start_time"],
@@ -407,7 +407,7 @@ def send_cancellation_email(user_email,booking_id,name,description,date1,selecte
 
     # Create the email content
     message = MIMEMultipart()
-    message["From"] = 'HSE Booking System'
+    message["From"] = 'Enniscorthy Booking System'
     message["To"] = user_email
     message["Subject"] = f"Cancellation Confirmation: (ID-{booking_id})"
 
@@ -545,7 +545,7 @@ def send_confirmation_email(user_email, booking_id, name, description, selected_
 
         # Create the email content
         message = MIMEMultipart()
-        message["From"] = 'HSE Booking System'
+        message["From"] = 'Enniscorthy Booking System'
         message["To"] = user_email
         message["Subject"] = f"Booking Confirmation: (ID-{booking_id})"
 
