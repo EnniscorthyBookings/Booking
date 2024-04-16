@@ -144,25 +144,19 @@ def book_room():
     show_image = st.toggle("Display Floor Layout")
 
     ###
-
-
     
     file_path2 = "ohmydaysOMD/test/Enniscorthy PCC.png"
     branch_name = "main"
-
-
-
 
     ######
     # If the checkbox is checked, display the image
     if show_image:
         try:
             # Get the contents of the PNG file from GitHub
-            # contents = repo.get_contents("Enniscorthy PCC.png")
             repo = g.get_repo("ohmydaysOMD/test")  # Assuming 'g' is your authenticated GitHub instance
             file2 = repo.get_contents(file_path2, ref=branch_name)
             st.write(file2)
-            image_bytes = file2.content
+            image_bytes = file2.decoded_content
             
             # Display the image
             st.image(image_bytes, caption="Floor Layout")
