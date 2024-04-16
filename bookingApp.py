@@ -145,7 +145,7 @@ def book_room():
 
     ###
     
-    file_path2 = "Enniscorthy PCC.png"
+    file_path2 = "ohmydaysOMD/test/Enniscorthy PCC.png"
     branch_name = "main"
 
     ######
