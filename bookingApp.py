@@ -16,16 +16,42 @@ def main():
             # Add more desks as needed
         }
 
+        image_location = st.image(uploaded_image, caption="Uploaded Image", use_column_width=True)
+
+        # Add CSS to overlay clickable areas on top of the image
+        image_location.markdown(
+            """
+            <style>
+            .desk-area {
+                position: absolute;
+                background-color: rgba(255, 0, 0, 0.3);
+                border: 2px solid red;
+                pointer-events: auto;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
+
         # Display clickable desks
         for desk_name, (x1, y1, x2, y2) in desk_areas.items():
-            if st.button(desk_name, on_click=lambda desk=desk_name: on_desk_click(desk)):
-                on_desk_click(desk_name)
+            desk_area_style = f"top: {y1}px; left: {x1}px; width: {x2 - x1}px; height: {y2 - y1}px;"
+            st.markdown(
+                f'<div class="desk-area" style="{desk_area_style}" onclick="select_desk(\'{desk_name}\')"></div>',
+                unsafe_allow_html=True,
+            )
 
+@st.cache(allow_output_mutation=True)
 def on_desk_click(desk_name):
-    st.write(f"You selected {desk_name}")
+    return st.empty()
+
+def select_desk(desk_name):
+    output = on_desk_click(desk_name)
+    output.write(f"You selected {desk_name}")
 
 if __name__ == "__main__":
     main()
+
 
 # import streamlit as st
 # import datetime
