@@ -138,7 +138,7 @@ def book_room():
     # Function to load and display the image
     # Function to load and display the image
     def display_image():
-        image = Image.open("Enniscorthy PCC.png")
+        image = Image.open("ohmydaysOMD/test/Enniscorthy PCC.png")
         st.image(image, channels="RGB", use_column_width=True)
     
     # Main Streamlit code
