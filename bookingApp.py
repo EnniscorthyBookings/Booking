@@ -104,12 +104,31 @@ def generate_random_booking_id():
     
 # Book a Room
 # Define a dictionary that maps room names to their capacities
+# Define room capacity data
 room_capacity = {
-    "Meeting Room 1": 14,
-    "Desk 1": 1,
-    "Desk 2": 1,
-    "Desk 3": 1,
-    "Desk 4": 1,
+    "Interview Room - 2.03 - D19": 8,
+    "Hot Desk Office - 2.04 - D13": 1,
+    "Hot Desk Office - 2.04 - D14": 1,
+    "Hot Desk Office - 2.04 - D15": 1,
+    "Hot Desk Office - 2.04 - D16": 1,
+    "Hot Desk Office - 2.04 - D17": 1,
+    "Hot Desk Office - 2.04 - D18": 1,
+    "Hot Desk Office - 2.05 - D7": 1,
+    "Hot Desk Office - 2.05 - D8": 1,
+    "Hot Desk Office - 2.05 - D9": 1,
+    "Hot Desk Office - 2.05 - D10": 1,
+    "Hot Desk Office - 2.05 - D11": 1,
+    "Hot Desk Office - 2.05 - D12": 1,
+    "Hot Desk Office - 2.08 - D1": 1,
+    "Hot Desk Office - 2.08 - D2": 1,
+    "Hot Desk Office - 2.08 - D3": 1,
+    "Hot Desk Office - 2.08 - D4": 1,
+    "Hot Desk Office - 2.08 - D5": 1,
+    "Single Office - 2.09": 1,
+    "Single Office - 2.11": 1,
+    "Meeting Room": 8,
+    "Single Office 2.17 - D23": 1,
+    "Single Office - 2.10": 1,
 }
 
 
