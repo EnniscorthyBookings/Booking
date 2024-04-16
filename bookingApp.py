@@ -123,10 +123,10 @@ def book_room():
         st.image(image, channels="RGB", use_column_width=True)
     
     # Main Streamlit code
-    st.title("Display Layout")
+   # st.title("Display Layout")
     
     # Checkbox to toggle image display
-    show_image = st.checkbox("Display Image")
+    show_image = st.toggle("Display Image")
     
     # If the checkbox is checked, display the image
     if show_image:
