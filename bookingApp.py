@@ -126,7 +126,7 @@ def book_room():
    # st.title("Display Layout")
     
     # Checkbox to toggle image display
-    show_image = st.toggle("Display Image")
+    show_image = st.toggle("Display Floor Layout")
     
     # If the checkbox is checked, display the image
     if show_image:
