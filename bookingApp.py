@@ -136,20 +136,41 @@ room_capacity = {
 def book_room():
     st.header("Book a Room or a Desk")
     # Function to load and display the image
-    # Function to load and display the image
-    def display_image():
-        image = Image.open("ohmydaysOMD/test/Enniscorthy PCC.png")
+    def display_image(image_bytes):
+        image = Image.open(io.BytesIO(image_bytes))
         st.image(image, channels="RGB", use_column_width=True)
     
     # Main Streamlit code
-   # st.title("Display Layout")
+    st.title("Display Layout")
     
     # Checkbox to toggle image display
-    show_image = st.toggle("Display Floor Layout")
+    show_image = st.checkbox("Display Floor Layout")
     
     # If the checkbox is checked, display the image
     if show_image:
-        display_image()
+        try:
+            # Get the contents of the PNG file from GitHub
+            contents = repo.get_contents("Enniscorthy PCC.png")
+            image_bytes = contents.decoded_content
+            
+            # Display the image
+            display_image(image_bytes)
+            
+        except Exception as e:
+            st.error(f"Error: {e}")
+   #  def display_image():
+   #      image = Image.open("ohmydaysOMD/test/Enniscorthy PCC.png")
+   #      st.image(image, channels="RGB", use_column_width=True)
+    
+   #  # Main Streamlit code
+   # # st.title("Display Layout")
+    
+   #  # Checkbox to toggle image display
+   #  show_image = st.toggle("Display Floor Layout")
+    
+   #  # If the checkbox is checked, display the image
+   #  if show_image:
+   #      display_image()
     date = st.date_input("Select the Date:", min_value=current_time_ireland.date(), value=None, format="DD/MM/YYYY")
     current_date = current_time_ireland.date()
     if date:
