@@ -162,7 +162,7 @@ def book_room():
             repo = g.get_repo("ohmydaysOMD/test")  # Assuming 'g' is your authenticated GitHub instance
             file2 = repo.get_contents(file_path2, ref=branch_name)
             st.write(file2)
-            image_bytes = file2.decoded_content
+            image_bytes = file2.content
             
             # Display the image
             st.image(image_bytes, caption="Floor Layout")
