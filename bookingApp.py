@@ -45,7 +45,7 @@ try:
     # Iterate through rows in the CSV file
     for row in reader:
         booking_id = float(row["booking_id"])
-        .["room_bookings"][booking_id] = {
+        ["room_bookings"][booking_id] = {
             "booking_id": booking_id,
             "date": row["date"],
             "start_time": row["start_time"],
