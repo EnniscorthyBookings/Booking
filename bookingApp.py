@@ -140,11 +140,8 @@ def book_room():
         image = Image.open(io.BytesIO(image_bytes))
         st.image(image, channels="RGB", use_column_width=True)
     
-    # Main Streamlit code
-    st.title("Display Layout")
-    
     # Checkbox to toggle image display
-    show_image = st.checkbox("Display Floor Layout")
+    show_image = st.toggle("Display Floor Layout")
     
     # If the checkbox is checked, display the image
     if show_image:
@@ -154,7 +151,7 @@ def book_room():
             image_bytes = contents.decoded_content
             
             # Display the image
-            display_image(image_bytes)
+            st.image(image_bytes, caption="Floor Layout")
             
         except Exception as e:
             st.error(f"Error: {e}")
