@@ -148,6 +148,7 @@ def book_room():
         try:
             # Get the contents of the PNG file from GitHub
             contents = repo.get_contents("Enniscorthy PCC.png")
+            st.write(contents)
             image_bytes = contents.decoded_content
             
             # Display the image
