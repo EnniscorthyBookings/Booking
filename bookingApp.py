@@ -141,7 +141,7 @@ def book_room():
         image = Image.open("Enniscorthy PCC.png")
         #st.image(image, channels="RGB", use_column_width=True)
         # Display image with default settings
-        image_zoom(image, size=(900, 300),keep_aspect_ratio=True, zoom_factor=3.0)
+        image_zoom(image, size=(900, 300),keep_resolution=True,keep_aspect_ratio=True, zoom_factor=3.0)
         
         # Display image with custom settings
         #image_zoom(image, mode="scroll", size=(800, 500), keep_aspect_ratio=False, zoom_factor=4.0, increment=0.2)
