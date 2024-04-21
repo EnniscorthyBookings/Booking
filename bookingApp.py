@@ -16,6 +16,7 @@ from streamlit_js_eval import streamlit_js_eval
 import calendar
 import json
 from io import BytesIO
+from streamlit_image_zoom import image_zoom
     
 # Set the timezone to "Europe/Dublin" (Ireland Time)
 ireland_tz = pytz.timezone('Europe/Dublin')
@@ -138,7 +139,13 @@ def book_room():
 
     def display_image():
         image = Image.open("Enniscorthy PCC.png")
-        st.image(image, channels="RGB", use_column_width=True)
+        #st.image(image, channels="RGB", use_column_width=True)
+        # Display image with default settings
+        image_zoom(image)
+        
+        # Display image with custom settings
+        image_zoom(image, mode="scroll", size=(800, 600), keep_aspect_ratio=False, zoom_factor=4.0, increment=0.2)
+
     
     # Main Streamlit code
    # st.title("Display Layout")
