@@ -6,3 +6,4 @@ email-to
 secure-smtplib
 PyGithub
 streamlit-js-eval
+streamlit-image-zoom
