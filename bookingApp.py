@@ -144,7 +144,7 @@ def book_room():
         image_zoom(image)
         
         # Display image with custom settings
-        image_zoom(image, mode="scroll", size=(800, 600), keep_aspect_ratio=False, zoom_factor=4.0, increment=0.2)
+        #image_zoom(image, mode="scroll", size=(800, 600), keep_aspect_ratio=False, zoom_factor=4.0, increment=0.2)
 
     
     # Main Streamlit code
